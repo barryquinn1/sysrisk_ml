@@ -38,7 +38,6 @@
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
   pdftitle={Herding to comply: Systemic risk consequences of capital policy actions in Europe},
-  pdfauthor={Barry Quinn, Barbara Casu, Sami Ben Naceur, Rym Ayadi, and Ronan Gallagher},
   pdfkeywords={Bayesian inference, Systemic risk, Capital policy, Unintended consequences},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
@@ -70,12 +69,12 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{float}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{wrapfig}
-\usepackage{float}
 \usepackage{colortbl}
 \usepackage{pdflscape}
 \usepackage{tabu}
@@ -87,11 +86,7 @@
 
 \title{\emph{Herding to comply:} Systemic risk consequences of capital policy
 actions in Europe}
-\author{Barry Quinn\footnote{Queen's University Belfast,
-  \href{mailto:b.quinn@qub.ac.uk}{\nolinkurl{b.quinn@qub.ac.uk}}},
-Barbara Casu\footnote{Cass Business School}, Sami Ben Naceur\footnote{IMF},
-Rym Ayadi\footnote{Cass Business School}, and Ronan Gallagher\footnote{Edinburgh
-  Business School}}
+\author{true \and true \and true \and true \and true}
 \date{May 10, 2021}
 
 \begin{document}
@@ -380,10 +375,8 @@ to curb excessive risk-taking in European banking. Our fundamental
 research question is to assess whether this ramping up of actions had
 any unintended network consequences.
 
-\begin{figure}
-\centering
-\includegraphics{figures/paper-fig1-1.png}
-\caption{Count of minimum capital requirements policy actions}
+\begin{figure}[H]
+\includegraphics{figures/paper-fig1-1} \caption{Count of minimum capital requirements policy actions}\label{fig:fig1}
 \end{figure}
 
 Figure 1 describes the evolution of the MCR policy actions over the
@@ -537,10 +530,8 @@ follows:
 (CoVaR_{system=k|j}^{X^{'},\tau})^{MaP} = X^{'} \beta_{system=k}^{MaP}+\delta^{MaP}(VaR^{\bf{X},\tau}_j)^{MaP}
 \end{equation}
 
-\begin{figure}
-\centering
-\includegraphics{figures/paper-fig2-1.png}
-\caption{Posterior probability credible set MaP CoVaR estimates}
+\begin{figure}[H]
+\includegraphics{figures/paper-fig2-1} \caption{Posterior probability credible set MaP  CoVaR estimates}\label{fig:fig2}
 \end{figure}
 
 Figure 2 visualised the Bayesian quantile adaptive \(L1\) regularised
@@ -649,19 +640,19 @@ data, which are excluded from the already crowded specification above.
 By its theoretical nature systemic risk, and its joint distribution with
 policy actions is a tail risk phenomenon, and capturing this feature in
 the conditional distribution of our hierarchical regression may require
-more nuance distributional assumes than normality. To this end, we
+more nuanced distributional assumptions than normality. To this end, we
 consider three alternative probability distributions, skewed-normal,
-t-distribution and log-normal. Widely accepted information criteria
-suggest that the t-distribution is the most appropriate among these
-alternatives, which conforms with expert advice for modelling extreme
-events in hierarchical models (Gelman et al. (2019)). The reported
-results are those based on a t-distribution. Furthermore, attenuation
-bias is a known issue when assessing the impact of country-level policy
-actions on individual banks (Akinci and Olmstead-Rumsey 2017). The
-flexibility of our Bayesian framework allows us to adjust for this
-measurement error using a latent variable set up. The results using a
-measurement error model are qualitatively similar to the reported
-estimates and are available upon request.
+t-distribution and log-normal. Widely Accepted Information Criteria
+(WAIC) suggest that the t-distribution is the most appropriate among
+these alternatives, which conforms with expert advice when modelling
+extreme events in hierarchical models (Gelman et al. (2019)). The
+reported results are those based on a t-distribution. Furthermore,
+attenuation bias is a known issue when assessing the impact of
+country-level policy actions on individual banks (Akinci and
+Olmstead-Rumsey 2017). The flexibility of our Bayesian framework allows
+us to adjust for this measurement error using a latent variable set up.
+The results using a measurement error model are qualitatively similar to
+the reported estimates and are available upon request.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
@@ -774,11 +765,8 @@ which are best-summarised visually\footnote{The direct frequentist
   be recovered, meaning the model coefficient represent a partial effect
   that ignores group-level covariance.}
 
-\begin{figure}
-\centering
-\includegraphics{figures/paper-fig3-1.png}
-\caption{Posterior probability distributions for quarter random
-intercepts}
+\begin{figure}[H]
+\includegraphics{figures/paper-fig3-1} \caption{Posterior probability distributions for quarter random intercepts}\label{fig:fig3}
 \end{figure}
 
 Figure 3 provides \emph{random} effects and their 99\%
@@ -787,36 +775,24 @@ the \(CoVaR^{99}_{it}\) regressions. The estimate shows a clear risk
 pattern which peaks in 2008:Q4, the epicentre of the recent financial
 crisis in Europe.
 
-\begin{figure}
-\centering
-\includegraphics{figures/paper-fig4-1.png}
-\caption{Posterior probability distributions for country random
-intercepts}
+\begin{figure}[H]
+\includegraphics{figures/paper-fig4-1} \caption{Posterior probability distributions for country random intercepts}\label{fig:fig4}
 \end{figure}
 
 Figure 4 illustrates country-level random intercepts and show that banks
 in each country are experiencing meaningful different systemic risk
 contributions hold all else equal.
 
-\begin{figure}
-\centering
-\includegraphics{figures/paper-fig5-1.png}
-\caption{Posterior probability distributions for country level random
-effects of tightening policy actions}
+\begin{figure}[H]
+\includegraphics{figures/paper-fig5-1} \caption{Posterior probability distributions for country level random effects of tightening policy actions}\label{fig:fig5}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics{figures/paper-fig6-1.png}
-\caption{Posterior probability distributions of country level random
-effects of loosening policy actions}
+\begin{figure}[H]
+\includegraphics{figures/paper-fig6-1} \caption{Posterior probability distributions of country level random effects of loosening policy actions}\label{fig:fig6}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics{figures/paper-fig7-1.png}
-\caption{Posterior probability distributions for country level random
-effects of ambiguous policy actions}
+\begin{figure}[H]
+\includegraphics{figures/paper-fig7-1} \caption{Posterior probability distributions for country level random effects of ambiguous policy actions}\label{fig:fig7}
 \end{figure}
 
 Figures 5-7 disentangle the pooled effects of the baseline model into
