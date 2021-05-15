@@ -83,10 +83,10 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
-
+\bibliography{mybibfile.bib}
 \title{\emph{Herding to comply:} Systemic risk consequences of capital policy
 actions in Europe}
-\author{true \and true \and true \and true \and true}
+\author{Barry Quinn \and Barbara Casu \and Rym Ayadi \and Sami Ben Naceur \and Ronan Gallagher}
 \date{May 10, 2021}
 
 \begin{document}
@@ -126,7 +126,7 @@ financial stability. One of the key concerns is that individually
 prudent behaviour of banks could amplify systemic risk. In particular,
 regulators worry that reforms that aimed to restrict total balance sheet
 risks, such as higher capital requirements and the introduction of
-leverage ratio requirements under Basle III, could result in banks
+leverage ratio requirements under Basel III, could result in banks
 becoming increasingly similar. Precisely due to prudential rules
 encouraging an expansion into specific areas and individual assets. As a
 result, while banks might be safer individually, they might also have
@@ -160,30 +160,29 @@ accuracy, we use a Bayesian adaptive LASSO technique to regularise the
 set of time-varying covariates that adjust for macro-level dynamics in
 tail risk. Unlikely a standard LASSO, this model adapts each predictor
 separately in terms of the optimal regularisation to improve accuracy
-and stabilise predictions(Li, Xi, and Lin 2010; Gelman, Hill, and
+and stabilise inference(Li, Xi, and Lin 2010; Gelman, Hill, and
 Vehtari 2020). In stage two, we use a Bayesian hierarchical regression
-model to disentangle policy action effects. This multilevel framework
+model to disentangle policy action effects. 
+
+A multilevel framework
 exploits the natural nested structure of the data (repeated observations
-of banks within countries), allowing different intercepts and slopes to
+of banks and country-level policy actions), allowing different intercepts and slopes to
 varying across countries and over time. When the number of banks per
 country is small, only including group indicators in a least-squares
-regression gives unacceptably noisy estimates. Our bayesian multilevel
+regression produces unacceptably noisy and biased estimates.  Furthermore, classical econometric method treat group-level effects as a nuisance parameter, removed via integration or marginalised to the error term. Our Bayesian multilevel
 regression, via a partial pooling approach, uses the variation in the
 data to estimate prior distribution on the deviation of the intercepts
-and slopes (Gelman, Hill, and Vehtari 2020). The procedure is especially
-appropriate when the critical variable of interest is at the country
-level and where some groupings (countries) have only a few publicly
-listed banks.
+and slopes (Gelman, Hill, and Vehtari 2020).  In the context of country-level policy effects on individual banks, nested in heterogeneous groups, Bayesian multilevel analysis provide superior inference.
 
-Our baseline results point to a positive link between the build-up of
+The paper's findings show a positive link between the build-up of
 tightening policy actions and systemic risk contribution one quarter on.
-Our hierarchical model disentangles this effect and finds that banks in
+Furthermore, the model disentangles this effect and finds that banks in
 Greece, Ireland and the UK seem to be driving this risk inducing
 behaviour. Overall, the influence of policy actions on individual system
 risk is weak, with banks in many countries showing little impact from
-policy actions one quarter. Interestingly, our models allow us to
-compare effect sizes and loosening policy actions have the strongish
-relative impact\footnote{Typically they have a 13 basis point reduction
+policy actions one to four quarters on. Interestingly, our models allow us to
+directly compare effect sizes. Results show that loosening policy actions have the strongest
+relative impact compared to tightening and ambiguous actions\footnote{Typically they have a 13 basis point reduction
   in average quarter systemic risk for a one standard deviation move in
   the predictor}. However, the estimate is quite noisy, with a 95\%
 credibility interval of {[}-0.139,0.141{]}.
@@ -260,7 +259,7 @@ essential findings, and Section V concludes.
 
 We start with daily equity and macroeconomic state variable data from
 Refinitiv Datastream for the four ICB financial sector industries,
-banks, investment banks and brokerage, insurance and real estate for 21
+banks, investment banks and brokerage, insurance and real estate covering 21
 European countries. Compustat Global provides quarterly balance sheet
 data used to create bank-level predictors. The quarterly data only
 include observations with a price to book ratio and leverage values in
@@ -282,7 +281,7 @@ evolution of eleven categories and 53 subcategories of instruments{]}
 MaPPED was compiled using a carefully designed questionnaire, in
 cooperation with experts from national central banks and supervisory
 authorities of all EU member states. We focus on the minimum capital
-requirements (hereafter MCR) policy actions in this database. To
+requirements (hereafter MCR) policy actions in this database\footnote{The decision to focus on only MCR actions is deliberate and theoretically motivated by collider bias issues first proposed by Pearl(2002). Conventional wisdom in classical econometric methods wrongly prioritise inclusion of statistical irrelevant as less damaging to statistical inference than exclusion of irrelevant variables. In modern econometric texts this problem is sometime referred to as \emph{Bad Controls}; in our context control for other prudential policy actions that can equally be consider as outcome variables in the analysis  \cite{angrist2008mostly,angrist2010credibility}}. To
 investigate their relationship to systemic risk, we create a quarterly
 sum of these policy actions categorised by their intended impact. There
 are three categories of impact:
