@@ -14,3 +14,9 @@ brms
 kableExtra
 knitr
 gridExtra
+dagitty
+ggdag
+DiagrammeR
+ggraph
+cowplot
+latex2exp
