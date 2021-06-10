@@ -37,7 +37,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={Herding to comply: Systemic risk consequences of capital policy actions in Europe},
+  pdftitle={Herding to comply: Hierarchical systemic risk consequences of capital policy actions in Europe},
   pdfauthor={Barry Quinn; Barbara Casu; Sami Ben Naceur; Rym Ayadi; Ronan Gallagher},
   pdfkeywords={Bayesian inference, Systemic risk, Capital policy, Unintended consequences},
   hidelinks,
@@ -85,8 +85,8 @@
 \usepackage{makecell}
 \usepackage{xcolor}
 
-\title{\emph{Herding to comply:} Systemic risk consequences of capital policy
-actions in Europe}
+\title{\emph{Herding to comply:} Hierarchical systemic risk consequences of
+capital policy actions in Europe}
 \author{Barry Quinn \and Barbara Casu \and Sami Ben Naceur \and Rym Ayadi \and Ronan Gallagher}
 \date{June 10, 2021}
 
@@ -196,22 +196,22 @@ The behaviour of bank risk taking in Europe has been shows to possess a
 hierarchical clustering make-up, where cluster membership is depending
 on their risk and profitability dynamics (Ayadi et al. 2020). We extend
 this work in two main ways. Firstly, we exploit an adaptive machine
-learning technique to encode this mitigation behaviour in probabilistic
-predictions of systemic risk\footnote{We contribute to the literature on
-  tail risk estimation by using a Bayesian machine learning approach to
-  improve accuracy and stablise inference. Building on (Adrian and
-  Brunnermeier 2016; Brunnermeier, Rother, and Schnabel 2020) we use
-  \(\Delta CoVaR\) to study banks as systemic \emph{risk inducers}. We
-  extend the work of (Bernardi, Gayraud, and Petrella 2013) by using an
-  adaptive LASSO technique to regularise macro-level dynamics in tail
-  risk. Unlikely a standard LASSO, this model adapts each predictor
-  separately in terms of the optimal regularisation(Li, Xi, and Lin
-  2010; Gelman, Hill, and Vehtari 2020). The sensitivity of a bank's
-  risk inducing behaviour is unlikely to be \emph{fixed} across differ
-  dynamic features of the domestic economy. For instance, macro economic
-  dynamic can influence business model migration in Europe banks (Ayadi
-  et al. 2020). Our machine learning adaption allows each bank's
-  \(\Delta CoVaR\) prediction to respond different to macro-level
+learning technique to encode this migrating risk behaviour into
+probabilistic predictions of systemic risk\footnote{We contribute to the
+  literature on tail risk estimation by using a Bayesian machine
+  learning approach to improve accuracy and stablise inference. Building
+  on (Adrian and Brunnermeier 2016; Brunnermeier, Rother, and Schnabel
+  2020) we use \(\Delta CoVaR\) to study banks as systemic \emph{risk
+  inducers}. We extend the work of (Bernardi, Gayraud, and Petrella
+  2013) by using an adaptive LASSO technique to regularise macro-level
+  dynamics in tail risk. Unlikely a standard LASSO, this model adapts
+  each predictor separately in terms of the optimal regularisation(Li,
+  Xi, and Lin 2010; Gelman, Hill, and Vehtari 2020). The sensitivity of
+  a bank's risk inducing behaviour is unlikely to be \emph{fixed} across
+  differ dynamic features of the domestic economy. For instance, macro
+  economic dynamic can influence business model migration in Europe
+  banks (Ayadi et al. 2020). Our machine learning adaption allows each
+  bank's \(\Delta CoVaR\) prediction to respond different to macro-level
   features.}. Secondly, we encode a hierarchical risk responsiveness of
 the capital policy actions by using a Bayesian hierarchical estimator in
 our second stage regression analysis\footnote{This multilevel framework
