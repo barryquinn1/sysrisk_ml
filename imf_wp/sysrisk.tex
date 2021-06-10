@@ -88,18 +88,19 @@
 \title{\emph{Herding to comply:} Systemic risk consequences of capital policy
 actions in Europe}
 \author{Barry Quinn \and Barbara Casu \and Sami Ben Naceur \and Rym Ayadi \and Ronan Gallagher}
-\date{June 09, 2021}
+\date{June 10, 2021}
 
 \begin{document}
 \maketitle
 \begin{abstract}
 In this paper, we contribute to the ongoing policy debate on the
 resilience of financial institutions by assessing whether capital policy
-actions in Europe contribute to systemic risk. Using a flexible Bayesian
-framework, we estimate systemic risk and assess the multilevel effects
-of capital policy actions across Europe. The framework produces a
-hierarchy of systemic risk implications of capital policy actions for
-each of the 21 European countries. We focus specifically on tightening,
+actions in Europe contribute to systemic risk. Using a flexible
+hierarchical framework, we estimate systemic risk and assess the
+multilevel effects of capital policy actions across Europe and over
+time. This probabilistic framework produces a hierarchy of systemic risk
+implications of capital policy actions for each of the 21 European
+countries in 83 quarters. We focus specifically on tightening,
 loosening, and ambiguous policy actions in the data. Our results reveal
 that the accumulation of tightening policy actions have the unintended
 consequence of increasing system risk by between 1 and 10 quarterly
@@ -191,18 +192,29 @@ the German banking system (Behn, Haselmann, and Vig 2016). They provided
 empirical evidence for Basel II endogenous systemic risk warnings of
 (Embrechts et al. 2001).
 
-The gap in the previous literature is to understand: to whom and when
-are regulatory changes affecting bank systemic risk? The previous
-studies focus on \emph{fixed} effects of regulation and supervision,
-where the variation in effects between countries and years is usually
-held constant or estimated through separate pooled regional-level
-regressions with standard errors clustered by country. Hsiao (2014)
-argues that using unrelated regressions to estimate related parameters
-throws \emph{the baby out with the bathwater}. Specifically, inference
-could be substantively improved by using valuable statistical
-information common to population and country (and) year specific
-characteristics. We address this gap by using a Bayesian hierarchical
-estimator in our regression analysis\footnote{This multilevel framework
+The behaviour of bank risk taking in Europe has been shows to possess a
+hierarchical clustering make-up, where cluster membership is depending
+on their risk and profitability dynamics (Ayadi et al. 2020). We extend
+this work in two main ways. Firstly, we exploit an adaptive machine
+learning technique to encode this mitigation behaviour in probabilistic
+predictions of systemic risk\footnote{We contribute to the literature on
+  tail risk estimation by using a Bayesian machine learning approach to
+  improve accuracy and stablise inference. Building on (Adrian and
+  Brunnermeier 2016; Brunnermeier, Rother, and Schnabel 2020) we use
+  \(\Delta CoVaR\) to study banks as systemic \emph{risk inducers}. We
+  extend the work of (Bernardi, Gayraud, and Petrella 2013) by using an
+  adaptive LASSO technique to regularise macro-level dynamics in tail
+  risk. Unlikely a standard LASSO, this model adapts each predictor
+  separately in terms of the optimal regularisation(Li, Xi, and Lin
+  2010; Gelman, Hill, and Vehtari 2020). The sensitivity of a bank's
+  risk inducing behaviour is unlikely to be \emph{fixed} across differ
+  dynamic features of the domestic economy. For instance, macro economic
+  dynamic can influence business model migration in Europe banks (Ayadi
+  et al. 2020). Our machine learning adaption allows each bank's
+  \(\Delta CoVaR\) prediction to respond different to macro-level
+  features.}. Secondly, we encode a hierarchical risk responsiveness of
+the capital policy actions by using a Bayesian hierarchical estimator in
+our second stage regression analysis\footnote{This multilevel framework
   exploits the natural nested structure of the data (repeated
   observations of banks and country-level policy actions), allowing
   different intercepts and slopes to varying across countries and over
@@ -216,28 +228,35 @@ estimator in our regression analysis\footnote{This multilevel framework
   and slopes (Gelman, Hill, and Vehtari 2020). In the context of
   country-level policy effects on individual banks, nested in
   heterogeneous groups, Bayesian multilevel analysis provide superior
-  inference.}. This estimator, allow for banks' responsiveness to
-capital policy actions to vary by country and year in order to assess if
-the policies which they face differ across these contexts (Gelman and
-Hill 2007; Gelman et al. 2013). Furthermore, coefficients are estimated
-jointly in clusters, using a \emph{shrinkage prior} improving inference
-within country and year groups by mitigating the effect of outliers,
-noisy data, overfitting, and heterogeneity between banks in different
-country and year groups. This will improve inference from a \emph{fixed}
-coefficient model, where the ``average'' coefficients mislead or even
-give nonsensical inferences when banks face fundamentally different
-external constraints across countries and years(Pepper 2002; Greene
-2014; Wooldridge 2010, 2019; Hsiao 2014).
-
-We contribute to the literature on tail risk estimation by using a
-Bayesian machine learning approach to improve accuracy and stablise
-inference. Building on (Adrian and Brunnermeier 2016; Brunnermeier,
-Rother, and Schnabel 2020) we use \(\Delta CoVaR\) to study banks as
-systemic \emph{risk inducers}. We extend the work of (Bernardi, Gayraud,
-and Petrella 2013) by using an adaptive LASSO technique to regularise
-macro-level dynamics in tail risk. Unlikely a standard LASSO, this model
-adapts each predictor separately in terms of the optimal
-regularisation(Li, Xi, and Lin 2010; Gelman, Hill, and Vehtari 2020).
+  inference.}. This allows us to answer an important gap in the previous
+literature: to whom and when are regulatory changes affecting bank
+systemic risk? The previous studies focus on \emph{fixed} effects of
+regulation and supervision, where the variation in effects between
+countries and years is usually held constant or estimated through
+separate pooled regional-level or year-level regressions with standard
+errors clustered by country. Hsiao (2014) argues that using unrelated
+regressions to estimate related parameters throws \emph{the baby out
+with the bathwater}. Specifically, inference could be substantively
+improved by using valuable statistical information common to population
+and country (and) year specific characteristics. Inspired by this
+finding we using an adaptive machine learning approach This estimator,
+allow for banks' responsiveness to capital policy actions to vary by
+country and year in order to assess if the policies which they face
+differ across these contexts (Gelman and Hill 2007; Gelman et al. 2013).
+Furthermore, coefficients are estimated jointly in clusters, using a
+\emph{shrinkage prior}\footnote{Our analysis performed an exhaustive
+  prior prediction analysis to find the optimal priors resulting a weak
+  prior knowledge being incorporated. Financial economists are slowly
+  moving towards the use of Bayesian inference to improve inference,
+  showing that can be an robust approach to incorporate economic
+  restrictions in high-dimensional problems (Nagel 2021)} improving
+inference within country and year groups by mitigating the effect of
+outliers, noisy data, overfitting, and heterogeneity between banks in
+different country and year groups. This will improve inference from a
+\emph{fixed} coefficient model, where the ``average'' coefficients
+mislead or even give nonsensical inferences when banks face
+fundamentally different external constraints across countries and
+years(Pepper 2002; Greene 2014; Wooldridge 2010, 2019; Hsiao 2014).
 
 In this paper, we contribute to this debate by evaluating how European
 banks' systemic risk contributions are affected by the build-up of
@@ -344,7 +363,8 @@ the expected sign of the action. Previous studies have signed policy
 actions in terms of their intended consequence. In this way, they
 restrict the parameter estimates on the accumulation of these effects,
 which may induce bias and mask unintended consequences (Akinci and
-Olmstead-Rumsey 2017, @Cerutti2016, @Meuleman2019).
+Olmstead-Rumsey 2017; Cerutti et al. 2016; Meuleman and Vander Vennet
+2019).
 
 Precisely, we capture the accumulated effect of each policy action using
 a cumulative sum and hypothesis that:
@@ -556,13 +576,14 @@ distribution of the phenomenon of interest\footnote{There is no free
   validation}. Conventionally, posterior probabilities using a maximum
 of the posterior density (Maximum a Posteriori or \(MaP\))\footnote{MaPs
   are mathematically equivalent to the minimisation problem in the
-  frequentist context (Lin and Chang 2012)} as a summary. We assume an
+  frequentist context (Lin and Chang 2012) and are equivalent to maximum
+  likelihood estimates with flat priors} as a summary. We assume an
 asymmetric Laplace distribution for the error terms and weakly
-informative priors on the regressor parameters\footnote{Prior predictive
-  checks show that the size of the dataset quick dominants any undue
-  influence of these priors and is available upon request from the
-  author}. From all the \(MaP\) parameters involved in the marginal and
-conditional quantiles the estimates of \(VaR^{\bf{X},\tau}_j\) and
+informative priors on the parameters\footnote{Prior predictive checks
+  show that the size of the dataset quick dominants any undue influence
+  of these priors and is available upon request from the author}. From
+all the \(MaP\) parameters involved in the marginal and conditional
+quantiles the estimates of \(VaR^{\bf{X},\tau}_j\) and
 \(\left( CoVaR_{system=k|j}^{\bf{X},\tau} \right)\) are derived as
 follows:
 
@@ -1100,6 +1121,11 @@ Econometrics: An Empiricist's Companion}. Princeton university press.
 How Better Research Design Is Taking the Con Out of Econometrics.''
 \emph{Journal of Economic Perspectives} 24 (2): 3--30.
 
+\leavevmode\hypertarget{ref-Ayadi2020}{}%
+Ayadi, Rym, Paola Bongini, Barbara Casu, and Doriana Cucinelli. 2020.
+``Bank Business Model Migrations in Europe: Determinants and Effects.''
+\emph{Br. J. Manag.}, nos. 1467-8551.12437 (November).
+
 \leavevmode\hypertarget{ref-Barth2001}{}%
 Barth, James, Gerard Caprio, and Ross Levine. 2001. ``Bank Regulation
 and Supervision: A New Database.'' \emph{Brookings-Wharton Papers on
@@ -1258,6 +1284,9 @@ and Bank Systemic Risk.''
 Mogliani, Matteo, and Anna Simoni. 2020. ``Bayesian MIDAS Penalized
 Regressions: Estimation, Selection, and Prediction.'' \emph{J. Econom.},
 August.
+
+\leavevmode\hypertarget{ref-Nagel2021}{}%
+Nagel, Stefan. 2021. \emph{Machine Learning in Asset Pricing}.
 
 \leavevmode\hypertarget{ref-Nijskens2011}{}%
 Nijskens, Rob, and Wolf Wagner. 2011. ``Credit Risk Transfer Activities
