@@ -136,7 +136,7 @@ Precisely, we capture the accumulated effect of each policy action using a cumul
 2. An increasing number of policy loosening actions will not affect systemic risk
 3. Ambiguous action increases will average out to have no discernible effect.
 
-```{r mcr_alt}
+```{r mcr_alt, eval=FALSE}
 mapped %>% filter(Category=="Minimum capital requirements" & `In force since - Year`>=1995) %>% group_by(`Strengthening / Loosening`) %>% summarise(n=sum(!is.na(`ID of a policy action`))) %>%
   ungroup() %>% 
   mutate(Percentage=round(100*n/sum(n)),
@@ -145,7 +145,9 @@ names(out.all)<-c("Intended Impact","Count","Percentage")
 flextable(out.all)  %>% autofit() %>% set_caption("Table 1: Summary of minimum capital requirement actions") %>%
   set_table_properties(layout = "autofit")
 ```
-```{r mcr, results='asis',eval=FALSE}
+
+
+```{r mcr, results='asis'}
 mapped %>% filter(Category=="Minimum capital requirements" & `In force since - Year`>=1995) %>% group_by(`Strengthening / Loosening`) %>% summarise(n=sum(!is.na(`ID of a policy action`))) %>%
   ungroup() %>% 
   mutate(Percentage=round(100*n/sum(n)),
