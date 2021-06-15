@@ -84,11 +84,14 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{hhline}
+\usepackage{hyperref}
 
 \title{\emph{Herding to comply:} Hierarchical systemic risk consequences of
 capital policy actions in Europe}
 \author{Barry Quinn \and Barbara Casu \and Sami Ben Naceur \and Rym Ayadi \and Ronan Gallagher}
-\date{June 14, 2021}
+\date{June 15, 2021}
 
 \begin{document}
 \maketitle
@@ -381,21 +384,6 @@ a cumulative sum and hypothesis that:
   Ambiguous action increases will average out to have no discernible
   effect.
 \end{enumerate}
-
-\begin{table}[!h]
-
-\caption{\label{tab:mcr}Summary of minimum capital requirement actions}
-\centering
-\begin{tabu} to \linewidth {>{\centering\arraybackslash}p{3cm}>{\centering}X>{\centering}X}
-\toprule
-\multicolumn{1}{c}{\begingroup\fontsize{8}{10}\selectfont \textcolor{blue}{Intended Impact}\endgroup} & \multicolumn{1}{c}{\begingroup\fontsize{8}{10}\selectfont \textcolor{blue}{Count}\endgroup} & \multicolumn{1}{c}{\begingroup\fontsize{8}{10}\selectfont \textcolor{blue}{Percentage}\endgroup}\\
-\midrule
-\cellcolor{yellow}{\textcolor{black}{Ambiguous}} & 56 & 25\\
-\cellcolor{yellow}{\textcolor{black}{Loosening}} & 12 & 5\\
-\cellcolor{yellow}{\textcolor{black}{Tightening}} & 155 & 70\\
-\bottomrule
-\end{tabu}
-\end{table}
 
 Table 1 shows the quarterly frequency of minimum capital requirement
 policy actions by the national regulators' intended impact. Policy
@@ -701,7 +689,7 @@ Endogeniety}\label{robustness-and-endogeniety}}
 
 We undertake a barrage of test and alternative specifications. By its
 theoretical nature systemic risk, and its joint distribution with policy
-actions is a rare event phenomenon, and capturing this feature in the
+actions is a rare event phenomenon. Capturing this feature in the
 conditional distribution of our hierarchical regression may require more
 nuanced distributional assumptions than normality. To this end, we
 consider three alternative probability distributions, skewed-normal,
@@ -711,84 +699,92 @@ these alternatives, which conforms with expert advice when modelling
 extreme events in hierarchical models (Gelman et al. 2019). The reported
 results are those based on a t-distribution. Heteroskedasticity is model
 explicitly through our varying-coefficients approach, with each group in
-our model having its own variance parameter, in addition to the pooled
-(country-level) error (Sims 2010). We interrogate different priors which
-have almost no impact on our coefficient estimates. This is not
-surprising given that a large amount of data will usually render
-redundant the influence of priors. We have explore different random
-effect coefficients on the base of different clusterings in the data, by
-bank size, at the bank-level. This results in variation cut across
-clusters which does not produce clear results between units. Finally,
-when we remove the country and/or year group from the random effects
-then the variation in the data is misappropriated to a different
-\emph{level} (Schmidt-Catran and Fairbrother 2015).
+our model having its variance parameter, in addition to the pooled
+(country-level) error (Sims 2010). We interrogate different priors,
+which have almost no impact on our coefficient estimates. These results
+are unsurprising given that a large amount of data will usually render
+redundant the influence of priors. We have explored different random
+effect coefficients based on different clusterings in the data, by bank
+size, at the bank level. The resultant variation cuts across clusters
+and obfuscates the phenomenon of interest. Finally, when we remove the
+country and year group from the random effects, then the variation in
+the data is misappropriated to a different \emph{level}(Schmidt-Catran
+and Fairbrother 2015).
 
-Robustness measures for systemic risk and regulation papers usually
-tackle endogeneity of some sort (See Appendix for a theoretical
-treatment of over policy actions treatment). When data has a natural
-clustering, especially with a time component, modelling the clustering
-directly helps correct for the unobserved correlation which occurs from
-unobserved shocks correlated within a country, a year, or a specific
-year within a country (Wooldridge 2010).In our case, our model has one
-error term common to all banks within each group of the model (plus the
-pooled regression level error), such that it assumes a degree of
-correlation across all firms within the same year; across all firms
-within the same country; and across all firms within the same year for a
-country.Put differently, our model best deals with unobserved
-heterogeneity by directly modelling it through allowing slopes and
-intercepts to vary across country and year clusters. Ignoring parameter
+Endogeneity is a common challenge when investigating the risk
+implications of regulatory actions (See Appendix for a theoretical
+treatment of over policy actions treatment). For example, naturally
+clustered data typically exhibits a correlation of unobserved shocks
+within a country, a quarter or a quarter specific quarter within a
+country (Wooldridge 2010).In our model, this correlation is model
+directly. More precisely, the model includes one error term attributed
+to all banks within each group of the model (plus the pooled regression
+level error). These terms capture correlation across banks; within the
+same quarter, within the same country, and the same quarter for a
+country. Put differently, our model best deals with unobserved
+heterogeneity by directly modelling it by allowing slopes and intercepts
+to vary across country and year clusters. Ignoring parameter
 heterogeneities among cross-sectional or time-varying units can lead to
-non-sensical parameter estimates if the average has no representativity
-across individual countries or years in our case (Hsiao 2014).
+non-sensical parameter estimates if the average has no
+representativeness across individual countries or quarters, in our case
+(Hsiao 2014).
 
 Endogeneity is a particular concern in firm-level regression for several
 reasons -- especially when the dependent variable is systemic risk. For
-one, right hand side variables in such regressions are invariably
-endogenous and an identification problem arises which can never be
-properly resolved due to the simultaneity present. Adding lagged
-dependant variables does nothing to deal with simultaneity bias, even
-though it is commonly believed to (Reed 2015). Lagging the dependant
-variable, however, has significant data requirements and introduces
-other forms of survivor bias, excluding firms who do not conform to the
-balance panel (such as newer established firms). Instead, we include a
-lagged AR(1) error structure to deal with serial correlation and the
-dynamic structure of the model. This is measured very precisely in our
-model, with a 95\% credible interval of{[}0.47,0.54{]}\footnote{Adding a
-  second autoregressive error does not improve model fit much, has a
-  small coefficient, and adds significant computational time}.
+one, right-hand side variables in such regressions are invariably
+endogenous, and an intractable identification problem arises due to the
+simultaneity present. Adding lagged dependant variables does nothing to
+deal with simultaneity bias, contrary to conventional belief(Reed 2015).
+However, lagging the dependant variable has significant data
+requirements. It introduces other forms of survivor bias, excluding
+firms who do not conform to the balance panel (such as newer established
+firms). Instead, we include a lagged AR(1) error structure to deal with
+serial correlation and the dynamic structure of the model. This
+autoregression term is measured precisely in our model, with a 95\%
+credible interval {[}0.47,0.54{]}\footnote{Adding a second
+  autoregressive error does not improve model fit much, has a small
+  coefficient, and adds significant computational time}.
 
-Secondly, endogeneity in regulation-systemic risk regressions are
-endemic if regulation is mis-measured (Akinci and Olmstead-Rumsey 2017).
-In such cases a policy action count might not fully capture banks'
-future systemic risk contributions, due to the non-linear cumulative
-affect of multiple policy actions. Measurement error in each policy
-action count not only biases downward their specific coefficients but
-complicates the interpretation of the other actions. Because if
-\emph{loose} is mismeasured, and if \emph{tight} reflects unobserved
-future systemic risk responsiveness, then \emph{loose} count may impact
-\emph{tight} count only because it is correlated with the \emph{true}
-(perfectly measured) marginal \emph{loose} used by banks to capital
-adequacy levels.
+Secondly, endogeneity in regulation-systemic risk regressions is endemic
+if regulation is mismeasured (Akinci and Olmstead-Rumsey 2017). In such
+cases, a policy action count might not fully capture banks' future
+systemic risk sensitivity due to the non-linear cumulative effect of
+multiple policy actions. Measurement error in each policy action count
+not only biases downward their specific coefficients but also
+complicates the other actions' sensitivity interpretations. For
+instances, if the \emph{tight} variable is measured with error due to a
+count underestimating the causal mechanism of tightening policy actions
+and the average \emph{tight} attenuates from the marginal \emph{tight}.
+Measurement error is \emph{tight} not only biases the \emph{tight}
+coefficients downwards but complicates the interpretation of
+\emph{loose} to measure systemic risk sensitivity. It follows that
+mismeasurement of \emph{tight}, could result in \emph{loose} impacting
+systemic risk only because it is correlated with the \emph{ground truth}
+(perfectly measured) marginal \emph{tight} which acts on banks' to
+reduce their systemic risk inducing behaviour. Therefore, correcting for
+mismeasurement error in each of our policy actions sum variables is
+vital for proper inference from the others.
 
 Care must be taken in what estimator to use in the context of
 measurement error. Some commonly used estimators, such as first
-differencing, will increase the size of the bias (Wooldridge 2015). A
-Bayesian approach to measurement error is computationally demanding but
-has several advantages. Firstly, the Bayesian estimator provides a
-posterior distribution that account for parameter uncertainty. In
-contrast, the classical estimator corrected for attenuation would
-require bootstrapping or some type of asymptotic approximation to
-account for this uncertainty. Secondly, Bayesian inference averages over
-plausible values of mismeasured policy actions in light of the data,
-rather than imputing a single best-guess and then proceeding as if this
-guess is correct. Uncertainty in estimation of policy actions is then
-propagated forward. Thirdly, we can integrate the measurement error with
-a more complex model: largely keeping our random effects structure, an
-autoregressive error structure, a student-t likelihood, and other
-deviations from a simplistic panel regression model (Carroll et al.
-2006). A Bayesian approach to measurement error is formulated by
-treating the true quantities being measured as missing data (Gelman et
-al. 2013). The full model is detailed are available in Appendix.
+differencing, will increase the bias size (Wooldridge 2015). On the
+other hand, a Bayesian approach to measurement error is computationally
+demanding but has several advantages. Firstly, the Bayesian estimator
+provides a posterior distribution that accounts for parameter
+uncertainty. In contrast, the classical estimator corrected for
+attenuation would require bootstrapping or some asymptotic approximation
+to account for this uncertainty---secondly, Bayesian inference averages
+over plausible values of mismeasured policy actions in light of the
+data. In contrast, traditional approaches impute a single best guess and
+then proceeding as if this guess is correct. Policy actions casual
+impact are capture with model uncertainty embedded. Thirdly, we can
+integrate the measurement error with a more complex model: essentially
+keeping our random effects structure, an autoregressive error structure,
+a student-t likelihood, and other deviations from a simplistic panel
+regression model (Carroll et al. 2006). Finally, a Bayesian approach to
+measurement error encodes the \emph{true} quantities of interest as
+missing data (Gelman et al. 2013). The complete model is detailed are
+available in Appendix.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
