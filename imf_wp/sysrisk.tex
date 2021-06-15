@@ -39,7 +39,7 @@
 \hypersetup{
   pdftitle={Herding to comply: Hierarchical systemic risk consequences of capital policy actions in Europe},
   pdfauthor={Barry Quinn; Barbara Casu; Sami Ben Naceur; Rym Ayadi; Ronan Gallagher},
-  pdfkeywords={Bayesian inference, Systemic risk, Capital policy, Unintended consequences},
+  pdfkeywords={Systemic risk, Capital policy, Unintended consequences},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
@@ -88,7 +88,7 @@
 \title{\emph{Herding to comply:} Hierarchical systemic risk consequences of
 capital policy actions in Europe}
 \author{Barry Quinn \and Barbara Casu \and Sami Ben Naceur \and Rym Ayadi \and Ronan Gallagher}
-\date{June 10, 2021}
+\date{June 14, 2021}
 
 \begin{document}
 \maketitle
@@ -695,25 +695,100 @@ time-varying systemic risk estimation. Finally, we include an AR(1)
 error process to adjust for the panel nature of our data, which are
 excluded from the already crowded specification above.
 
-\hypertarget{robustness-checks}{%
-\subsection{Robustness checks}\label{robustness-checks}}
+\hypertarget{robustness-and-endogeniety}{%
+\subsection{Robustness and
+Endogeniety}\label{robustness-and-endogeniety}}
 
-By its theoretical nature systemic risk, and its joint distribution with
-policy actions is a tail risk phenomenon, and capturing this feature in
-the conditional distribution of our hierarchical regression may require
-more nuanced distributional assumptions than normality. To this end, we
+We undertake a barrage of test and alternative specifications. By its
+theoretical nature systemic risk, and its joint distribution with policy
+actions is a rare event phenomenon, and capturing this feature in the
+conditional distribution of our hierarchical regression may require more
+nuanced distributional assumptions than normality. To this end, we
 consider three alternative probability distributions, skewed-normal,
 t-distribution and log-normal. Widely Accepted Information Criteria
 (WAIC) suggest that the t-distribution is the most appropriate among
 these alternatives, which conforms with expert advice when modelling
-extreme events in hierarchical models (Gelman et al. (2019)). The
-reported results are those based on a t-distribution. Furthermore,
-attenuation bias is a known issue when assessing the impact of
-country-level policy actions on individual banks (Akinci and
-Olmstead-Rumsey 2017). The flexibility of our Bayesian framework allows
-us to adjust for this measurement error using a latent variable set up.
-The results using a measurement error model are qualitatively similar to
-the reported estimates and are available upon request.
+extreme events in hierarchical models (Gelman et al. 2019). The reported
+results are those based on a t-distribution. Heteroskedasticity is model
+explicitly through our varying-coefficients approach, with each group in
+our model having its own variance parameter, in addition to the pooled
+(country-level) error (Sims 2010). We interrogate different priors which
+have almost no impact on our coefficient estimates. This is not
+surprising given that a large amount of data will usually render
+redundant the influence of priors. We have explore different random
+effect coefficients on the base of different clusterings in the data, by
+bank size, at the bank-level. This results in variation cut across
+clusters which does not produce clear results between units. Finally,
+when we remove the country and/or year group from the random effects
+then the variation in the data is misappropriated to a different
+\emph{level} (Schmidt-Catran and Fairbrother 2015).
+
+Robustness measures for systemic risk and regulation papers usually
+tackle endogeneity of some sort (See Appendix for a theoretical
+treatment of over policy actions treatment). When data has a natural
+clustering, especially with a time component, modelling the clustering
+directly helps correct for the unobserved correlation which occurs from
+unobserved shocks correlated within a country, a year, or a specific
+year within a country (Wooldridge 2010).In our case, our model has one
+error term common to all banks within each group of the model (plus the
+pooled regression level error), such that it assumes a degree of
+correlation across all firms within the same year; across all firms
+within the same country; and across all firms within the same year for a
+country.Put differently, our model best deals with unobserved
+heterogeneity by directly modelling it through allowing slopes and
+intercepts to vary across country and year clusters. Ignoring parameter
+heterogeneities among cross-sectional or time-varying units can lead to
+non-sensical parameter estimates if the average has no representativity
+across individual countries or years in our case (Hsiao 2014).
+
+Endogeneity is a particular concern in firm-level regression for several
+reasons -- especially when the dependent variable is systemic risk. For
+one, right hand side variables in such regressions are invariably
+endogenous and an identification problem arises which can never be
+properly resolved due to the simultaneity present. Adding lagged
+dependant variables does nothing to deal with simultaneity bias, even
+though it is commonly believed to (Reed 2015). Lagging the dependant
+variable, however, has significant data requirements and introduces
+other forms of survivor bias, excluding firms who do not conform to the
+balance panel (such as newer established firms). Instead, we include a
+lagged AR(1) error structure to deal with serial correlation and the
+dynamic structure of the model. This is measured very precisely in our
+model, with a 95\% credible interval of{[}0.47,0.54{]}\footnote{Adding a
+  second autoregressive error does not improve model fit much, has a
+  small coefficient, and adds significant computational time}.
+
+Secondly, endogeneity in regulation-systemic risk regressions are
+endemic if regulation is mis-measured (Akinci and Olmstead-Rumsey 2017).
+In such cases a policy action count might not fully capture banks'
+future systemic risk contributions, due to the non-linear cumulative
+affect of multiple policy actions. Measurement error in each policy
+action count not only biases downward their specific coefficients but
+complicates the interpretation of the other actions. Because if
+\emph{loose} is mismeasured, and if \emph{tight} reflects unobserved
+future systemic risk responsiveness, then \emph{loose} count may impact
+\emph{tight} count only because it is correlated with the \emph{true}
+(perfectly measured) marginal \emph{loose} used by banks to capital
+adequacy levels.
+
+Care must be taken in what estimator to use in the context of
+measurement error. Some commonly used estimators, such as first
+differencing, will increase the size of the bias (Wooldridge 2015). A
+Bayesian approach to measurement error is computationally demanding but
+has several advantages. Firstly, the Bayesian estimator provides a
+posterior distribution that account for parameter uncertainty. In
+contrast, the classical estimator corrected for attenuation would
+require bootstrapping or some type of asymptotic approximation to
+account for this uncertainty. Secondly, Bayesian inference averages over
+plausible values of mismeasured policy actions in light of the data,
+rather than imputing a single best-guess and then proceeding as if this
+guess is correct. Uncertainty in estimation of policy actions is then
+propagated forward. Thirdly, we can integrate the measurement error with
+a more complex model: largely keeping our random effects structure, an
+autoregressive error structure, a student-t likelihood, and other
+deviations from a simplistic panel regression model (Carroll et al.
+2006). A Bayesian approach to measurement error is formulated by
+treating the true quantities being measured as missing data (Gelman et
+al. 2013). The full model is detailed are available in Appendix.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
@@ -737,12 +812,6 @@ of different priors and likelihoods.\footnote{Fixed effect coefficients
   the random effects occurs. The Bayesian \(R^2\) for the normal
   likelihood is smaller than the student-t by around 9\%-13\%}.
 
-\begin{ThreePartTable}
-\begin{TableNotes}
-\small
-\item \textit{Note: } 
-\item Results for regression model 1, which excludes random effects of the policy actions at the country level.For each coefficient, the mean(Estimate), 5\% and 95\% percentiles (l-95\% CI and U-95\% CI) of the posterior distribution is reported. The latter two percentile ranges represent the 90\% credible/uncertainty interval.Adjusting macro economic parameter estmates are excluded for brevity
-\end{TableNotes}
 \begin{longtabu} to \linewidth {>{\centering}X>{\centering}X>{\centering}X>{\centering}X}
 \caption{\label{tab:baseline}Summary of Baseline Model Regression Results}\\
 \toprule
@@ -763,16 +832,8 @@ Variable & Estimate & l-95 CI & u-95 CI\\
 \hspace{1em}\cellcolor{gray!6}{$\sigma$} & \cellcolor{gray!6}{0.707} & \cellcolor{gray!6}{0.692} & \cellcolor{gray!6}{0.722}\\
 \hspace{1em}$\nu$ & 1.001 & 1.000 & 1.004\\
 \bottomrule
-\insertTableNotes
 \end{longtabu}
-\end{ThreePartTable}
 
-\begin{ThreePartTable}
-\begin{TableNotes}
-\small
-\item \textit{Note: } 
-\item Results for regression model 2, which includes random effects of the policy actions at the country level.For each coefficient, the mean(Estimate), 5\% and 95\% percentiles (l-95\% CI and U-95\% CI) of the posterior distribution is reported. The latter two percentile ranges represent the 90\% credible/uncertainty interval. R\_hat is the convergence metric and close to one when the MCMC chains are well-mixed and converged.  Note that the 'total' estimated coefficient for a given country or year is the sum of the population fixed effect coefficient and the rand effect coefficient particular to that country or year.  We do not report the estimated correlations between coefficients within each group-level regression, which our LKJ prior estimates, as their estimated error is too large. Adjusting macro economic parameter estimates are excluded for brevity
-\end{TableNotes}
 \begin{longtabu} to \linewidth {>{\raggedright}X>{\centering}X>{\centering}X>{\centering}X>{\centering}X>{\centering}X}
 \caption{\label{tab:mixedeffects}Summary of Hierarchical Model Regression Results}\\
 \toprule
@@ -800,9 +861,7 @@ Variable & Estimate & l-95 CI & u-95 CI\\
 \hspace{1em}sigma & 0.707 & 0.008 & 0.692 & 0.722 & 1.003\\
 \hspace{1em}\cellcolor{gray!6}{nu} & \cellcolor{gray!6}{1.001} & \cellcolor{gray!6}{0.001} & \cellcolor{gray!6}{1.000} & \cellcolor{gray!6}{1.004} & \cellcolor{gray!6}{1.000}\\
 \bottomrule
-\insertTableNotes
 \end{longtabu}
-\end{ThreePartTable}
 
 Several initial findings are noteworthy. There is a statistically
 credible positive link between the build-up of tightening policy actions
@@ -1173,6 +1232,11 @@ Cantone, David, Nadya Jahn, and Elena Rancoita. 2019. ``Thinking Beyond
 Borders: How Important Are Reciprocity Arrangements for the Use of
 Sectoral Capital Buffers.'' European Central Bank.
 
+\leavevmode\hypertarget{ref-Carroll2006}{}%
+Carroll, Raymond J, David Ruppert, Leonard A Stefanski, and Ciprian M
+Crainiceanu. 2006. \emph{Measurement Error in Nonlinear Models: A Modern
+Perspective, Second Edition}. CRC Press.
+
 \leavevmode\hypertarget{ref-Cerutti2017}{}%
 Cerutti, Eugenio, Stijn Claessens, and Luc Laeven. 2017. ``The Use and
 Effectiveness of Macroprudential Policies: New Evidence.'' \emph{Journal
@@ -1308,6 +1372,16 @@ Pepper, John V. 2002. ``Robust Inferences from Random Clustered Samples:
 An Application Using Data from the Panel Study of Income Dynamics.''
 \emph{Econ. Lett.} 75 (3): 341--45.
 
+\leavevmode\hypertarget{ref-Reed2015}{}%
+Reed, William Robert. 2015. ``On the Practice of Lagging Variables to
+Avoid Simultaneity.'' \emph{Oxford Bulletin of Economics and
+Statistics}.
+
+\leavevmode\hypertarget{ref-Schmidt-Catran2015}{}%
+Schmidt-Catran, Alexander W, and Malcolm Fairbrother. 2015. ``The Random
+Effects in Multilevel Models: Getting Them Wrong and Getting Them
+Right.'' \emph{Eur. Sociol. Rev.} 32 (1): 23--38.
+
 \leavevmode\hypertarget{ref-Schneider2020}{}%
 Schneider, Eric B. 2020. ``Collider Bias in Economic History Research.''
 \emph{Explor. Econ. Hist.} 78 (October): 101356.
@@ -1316,6 +1390,10 @@ Schneider, Eric B. 2020. ``Collider Bias in Economic History Research.''
 Segura, Anatoli, and Javier Suarez. 2011. ``Liquidity Shocks, Roll-over
 Risk and Debt Maturity.'' \emph{CEPR Discussion Paper No. DP8324},
 April.
+
+\leavevmode\hypertarget{ref-Sims2010}{}%
+Sims, Christopher A. 2010. ``But Economics Is Not an Experimental
+Science.'' \emph{J. Econ. Perspect.} 24 (2): 59--68.
 
 \leavevmode\hypertarget{ref-Stein2012}{}%
 Stein, Jeremy C. 2012. ``Monetary Policy as Financial Stability
@@ -1346,6 +1424,10 @@ Edited by MIT press. MIT Press.
 \leavevmode\hypertarget{ref-Wooldridge2010}{}%
 Wooldridge, Jeffrey M. 2010. \emph{Econometric Analysis of Cross Section
 and Panel Data, Second Edition}. MIT Press.
+
+\leavevmode\hypertarget{ref-Wooldridge2015}{}%
+---------. 2015. \emph{Introductory Econometrics: A Modern Approach}.
+Cengage Learning.
 
 \leavevmode\hypertarget{ref-Wooldridge2019}{}%
 ---------. 2019. ``Correlated Random Effects Models with Unbalanced

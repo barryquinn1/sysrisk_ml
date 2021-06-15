@@ -1,0 +1,572 @@
+---
+title: "*Herding to comply:* Hierarchical systemic risk consequences of capital policy actions in Europe"
+author:
+  - Barry Quinn
+  - Barbara Casu
+  - Sami Ben Naceur
+  - Rym Ayadi
+  - Ronan Gallagher
+date: "`r format(Sys.time(),'%B %d, %Y')`"
+abstract: "In this paper, we contribute to the ongoing policy debate on the resilience of financial institutions by assessing whether capital policy actions in Europe contribute to systemic risk. Using a flexible hierarchical framework, we estimate systemic risk and assess the multilevel effects of capital policy actions across Europe and over time. This probabilistic framework produces a hierarchy of systemic risk implications of capital policy actions for each of the 21 European countries in 83 quarters. We focus specifically on tightening, loosening, and ambiguous policy actions in the data. Our results reveal that the accumulation of tightening policy actions have the unintended consequence of increasing system risk by between 1 and 10 quarterly percentage points at the bank level. When evaluating the intra-national posterior probability of the 'random effects', banks in Greece, Ireland and the United Kingdom seem to be driving an increase in systemic risk. Our results suggest capital adequacy regulation can have the unintended consequence of increasing systemic risk. This involuntary association may result from several systemically unimportant institutions becoming 'systemic as a herd' when investing in the same asset classes to comply with capital rules."
+
+acknowledgements: "We would like to acknowledge Professor John Wilson, Professor Donal McKillop and Professor John Turner for the helpful commentary and advice on this paper."
+
+keywords:
+  - Bayesian inference
+  - Systemic risk
+  - Capital policy
+  - Unintended consequences
+bibliography: mybibfile.bib
+output: 
+  word_document:
+    reference_docx: "sysrisk_word_template.docx"  
+...
+
+
+
+```{r Cleanup, include=FALSE}
+library(tidybayes)
+library(tidyverse)
+library(brms)
+library(kableExtra)
+library(flextable)
+library(officer)
+load("~/Dropbox/Research/Working Papers/IMF/data/brms_for_paper.RData")
+load("~/Dropbox/Research/Working Papers/IMF/data/mapped.RData")
+load("~/Dropbox/Research/Working Papers/IMF/data/bayes_covar_sum.RData")
+```
+
+```{r Setup, include=FALSE, results="hide", warning=FALSE}
+## This chunk is for setting nice options for the output. Notice how
+## we create both png and pdf files by default, so that we can easily process
+## to both HTML and LaTeX/PDF files later.
+library(knitr)
+opts_chunk$set(echo = F,message = F,warning = F,dpi=300, fig.width=14,fig.height=7)
+# opts_chunk$set(fig.path='figures/paper-',
+#                cache.path='cache/report-',
+#                dev=c("png","pdf"),
+#                fig.width=14,
+#                fig.height=7,
+#                dpi=300,
+#                fig.show='hold',
+#                fig.pos = "H", out.extra = "",
+#                fig.lp="fig:",
+#                cache=TRUE,
+#                par=TRUE,
+#                echo=FALSE,
+#                results="hide",
+#                message=FALSE,
+#                warning=FALSE)
+# 
+# knit_hooks$set(par=function(before, options, envir){
+#     if (before && options$fig.show!='none') par(mar=c(4,4,.1,.1),cex.lab=.95,cex.axis=.9,mgp=c(2,.7,0),tcl=-.3)
+# }, crop=hook_pdfcrop)
+```
+
+
+# Introduction
+
+Not since the Great Depression-era reforms has there been such sweeping
+re-regulation of financial institutions and markets. Following the
+global financial crisis of 2007-09, national regulators and
+international bodies have promoted a series of reforms to foster
+economic stability. Ten years on from the problem, regulators,
+policymakers and industry participants are trying to assess the outcomes
+of such reforms and the interplay of regulation, supervision and
+financial stability. One of the key concerns is that individually
+prudent behaviour of banks could amplify systemic risk. In particular,
+regulators worry that reforms that aimed to restrict total balance sheet
+risks, such as higher capital requirements and the introduction of
+leverage ratio requirements under Basel III, could result in banks
+becoming increasingly similar. Precisely due to prudential rules
+encouraging an expansion into specific areas and individual assets. As a
+result, while banks might be safer individually, they might also have
+become ``systemic as a herd'', that is, susceptible to the same shocks,
+which could, in turn, increase systemic risk. Despite its importance,
+work on this topic is at a relatively early stage.
+
+There is a body of theoretical research that has investigated why banks herd. One hypothesis posits that banks seek safety in similarity; that is, as banks become concerned about regulatory bailouts, they have incentives to copy each other's behaviour as they seek to exploit the "too many to fail" guarantee [@Acharya2007; @Vives2014]. Another strand of the literature argues that banks herd through investment choices. As individual banks diversify, their asset portfolios may increase, increasing the linkages between financial institutions and ultimately increasing systemic risk. @Allen2012 present a model in which asset commonality and short-term bank debt interact to generate systemic risk.  
+
+Herding behaviour has also been studied on the liabilities side [@Farhi2012; @Horvath2017; @Segura2011; @Stein2012]. @Vives2014 argues that well-intentioned regulation and supervision can lead to unexpected risk enhancing consequences through strategic complementarity. The empirical literature has also investigated banks herding behaviour through the diversification channel [@Hirakata2017; @Nijskens2011].
+
+Our study also contributes to the literature on bank risk-taking and the quality of regulation and supervision. Studies using the World Bank surveys on bank regulations and oversight find laws that empower remote monitoring, promote information disclosure, and create incentives for private sector corporate control advocate sustainable banks' performance and encourage stability[@Barth2001;@Barth2004;@Barth2006;@Barth2008;@Barth2012]. Further work focusing on bank risk-taking finds mixed results. @Agoraki2011 find that the direct effect of market power reduces risk-taking in banks in Central and Eastern Europe. However, risk-taking is decreased only when banks with weak (strong) market power are exposed to more stringent capital (activity restrictions) regulation. They find that official supervisory authority has only a direct effect on bank risk. @Klomp2012 construct multidimensional bank risk measures distilling 25 risk indicators into two common factors. They see the relationship between bank risk, regulation, and supervision depending on size, ownership structure, and riskiness level. A few studies consider regulation, supervision and system-wide risk. @Demirguc-Kunt2011 find that BCP compliance is not robustly associated with bank soundness, estimated by a system-wide z-score. One shortcoming of this study is that the authors' risk measure fails to capture systemic contribution at the bank level, which in turn would not provide disaggregated information on individual bank strategies [@Delis2011].  @Gehrig2017 are on of the first papers to provide empirical events of the unintended systemic risk consequence of capital regulation.  Their study assess the Basel process of capital regulation's financial stability using two risk measures that capture a bank's contribution and exposure to systemic risk.  Surprisingly, they find evidence that the adoption of internal models of credit risk is enhancing systemic risk. This effect is more pronounced in large systemically critical European banks. Their results extended the finding of unintended risk consequences of internal model-based regulation in the German banking system [@Behn2016]. They provided empirical evidence for Basel II endogenous systemic risk warnings of [@Embrechts2001].
+
+The behaviour of bank risk taking in Europe has been shows to possess a hierarchical clustering make-up, where cluster membership is depending on their risk and profitability dynamics [@Ayadi2020].  We extend this work in two main ways. Firstly, we exploit an adaptive machine learning technique to encode this migrating risk behaviour into probabilistic predictions of systemic risk^[We contribute to the literature on tail risk estimation by using a Bayesian machine learning approach to improve accuracy and stablise inference.  Building on [@Adrian2016;
+@Brunnermeier2020] we use $\Delta CoVaR$ to study banks
+as systemic *risk inducers*. We extend the work of [@Bernardi2013] by using an adaptive LASSO technique to regularise macro-level dynamics in tail risk. Unlikely a standard LASSO, this model adapts each predictor separately in terms of the optimal regularisation(Li, Xi, and Lin 2010; Gelman, Hill, and
+Vehtari 2020). The sensitivity of a bank's risk inducing behaviour is unlikely to be *fixed* across differ dynamic features of the domestic economy. For instance, macro economic dynamic can influence business model migration in Europe banks [@Ayadi2020]. Our machine learning adaption allows each bank's $\Delta CoVaR$ prediction to respond different to macro-level features.]. Secondly, we encode a hierarchical risk responsiveness of the capital policy actions by using a Bayesian hierarchical estimator in our second stage regression analysis^[This multilevel framework exploits the natural nested structure of the data (repeated observations of banks and country-level policy actions), allowing different intercepts and slopes to varying across countries and over time. When the number of banks per
+country is small, only including group indicators in a least-squares
+regression produces unacceptably noisy and biased estimates.  Furthermore, classical econometric method treat group-level effects as a nuisance parameter, removed via integration or marginalised to the error term. Our Bayesian multilevel regression, via a partial pooling approach, uses the variation in the data to estimate prior distribution on the deviation of the intercepts
+and slopes (Gelman, Hill, and Vehtari 2020).  In the context of country-level policy effects on individual banks, nested in heterogeneous groups, Bayesian multilevel analysis provide superior inference.].  This allows us to answer an important gap in the previous literature: to whom and when are regulatory changes affecting bank systemic risk? The previous studies focus on *fixed* effects of regulation and supervision, where the variation in effects between countries and years is usually held constant or estimated through separate pooled regional-level or year-level regressions with standard errors clustered by country. @Hsiao2014 argues that using unrelated regressions to estimate related parameters throws *the baby out with the bathwater*. Specifically, inference could be substantively improved by using valuable statistical information common to population and country (and) year specific characteristics.  Inspired by this finding we using an adaptive machine learning approach   This estimator, allow for banks’ responsiveness to capital policy actions to vary by country and year in order to assess if the policies which they face differ across these contexts [@Gelman2007;@Gelman2013].  Furthermore, coefficients are estimated jointly in clusters, using a *shrinkage prior*^[Our analysis performed an exhaustive prior prediction analysis to find the optimal priors resulting a weak prior knowledge being incorporated.  Financial economists are slowly moving towards the use of Bayesian inference to improve inference, showing that can be an robust approach to incorporate economic restrictions in high-dimensional problems [@Nagel2021]] improving inference within country and year groups by mitigating the effect of outliers, noisy data, overfitting, and heterogeneity between banks in different country and year groups.  This will improve inference from a *fixed* coefficient model, where the "average" coefficients mislead or even give nonsensical inferences when banks face fundamentally different external constraints across countries and years[@Pepper2002;@Greene2014;@Wooldridge2010;@Hsiao2014;@Wooldridge2019].
+
+   
+
+In this paper, we contribute to this debate by evaluating how European
+banks' systemic risk contributions are affected by the build-up of
+capital policy actions. We source the data on policy actions from the *Ma*cro*P*rudential *P*olicy *E*valuation *D*atabase (MaPPED)^[https://www.ecb.europa.eu/pub/research/working-papers/html/mapped.en.html] introduced by @Budnik2018. The MaPPED data captures the "*life-cycle*" of policy instruments expected to impact the whole banking system significantly.  The database categorises instruments into either genuinely macroprudential or essentially microprudential. It tracks events of the evolution of eleven categories and 53 subcategories of instruments. MaPPED uses a carefully designed questionnaire in cooperation with experts from national central banks and supervisory authorities of all EU member states. Nevertheless, survey information only reflects whether laws are on the books, not to what extent they affect the network-wide risk in practice.  
+
+The paper's findings show a positive link between the build-up of
+tightening policy actions and systemic risk contribution.
+Furthermore, the model disentangles this effect and finds that banks in
+Greece, Ireland and the UK drive this risk inducing
+behaviour. Overall, the influence of policy actions on system
+risk is weak, with banks in many countries showing little impact from
+policy actions one to four quarters on. The models allow us to directly compare effect size, revealing loosening actions have the strongest relative impact compared to tightening and ambiguous actions^[Typically they have a 13 basis point reduction in average quarter systemic risk for a one standard deviation move in the predictor]. However, the estimate is quite noisy, with a 95% credibility interval of [-0.139,0.141]. 
+
+This finding supports the fallacy of composition hypothesis [@Embrechts2001]: capital regulation - based on a bank's own risk - can unintentionally exacerbate systemic risk [@Acharya2009;@Danielsson2012;@Embrechts2001;@Gehrig2017]. As banks comply with minimum capital standards, they invest (herd) in similar securities that are more likely to be associated with common factors, especially in crisis time [@Danielsson2012].
+
+The remainder of this paper is structured as follows. Section II presents the data collection process. Section III offers a practical design and estimation process. Section IV provides a discussion of the essential findings, and Section V concludes. 
+
+# Data {#data}
+We start with daily equity and macroeconomic state variable data from Refinitiv Datastream for the four ICB financial sector industries, banks, investment banks and brokerage, insurance and real estate covering 21 European countries. Compustat Global provides quarterly balance sheet data used to create bank-level covariates. The quarterly data only include observations with a price to book ratio and leverage values in the interval $[0, 100]$. We further apply truncation to the maturity mismatch variable at the 1st and 99th percentile.Finally, to allow for adequate extreme event history, only those institutions which have at least two years of equity data are included in the sample. After data cleansing, we have a total of 724 financial institutions in our (116 commercial banks, 238 investment banks, 284 real estate companies, and 66 are insurance firms). The sample period for the systemic risk estimation is 1995:I-2015:IV. The central part of the estimation uses daily data.
+
+We source the data on policy actions from the *Ma*cro*P*rudential *P*olicy *E*valuation *D*atabase (MaPPED)^[https://www.ecb.europa.eu/pub/research/working-papers/html/mapped.en.html] introduced by @Budnik2018.  The data tracks eleven categories and 53 subcategories of instruments.  MaPPED was compiled using a carefully designed questionnaire, in cooperation with experts from national central banks and supervisory authorities of all EU member states.  We focus on the minimum capital requirements (hereafter MCR) policy actions in this database^[The decision to focus on only MCR actions is deliberate and theoretically motivated by collider bias issues [@Pearl2009, @Schneider2020]. Conventional wisdom in classical econometric methods wrongly prioritise inclusion of statistical irrelevant as less damaging to statistical inference than exclusion of irrelevant variables. In modern econometric texts this problem is sometime referred to as *Bad Controls*; in our context controlling for other prudential policy actions that can equally be consider as outcome variables in the analysis  [@angrist2008mostly,@angrist2010credibility]. See Appendix for a detailed exposition of the problem as it applies to policy action evaluation].  To investigate their relationship to systemic risk, we create a quarterly sum of these policy actions categorised by their intended impact.  There are three categories of impact:
+
+1. Policy loosening
+2. Policy tightening
+3. Other and ambiguous impact
+
+In line with @Cerutti2017, we create a lagged cumulative count of actions to capture the overall policy stance of the regulators.  This sum increases when the policy instrument is activated, or there is a change in scope and decreases when they are deactivated. Unlike previous studies, we do not impose a prior assumption on the impact of the three categories. This numeration places a prior belief on the expected sign of the action.  Previous studies have signed policy actions in terms of their intended consequence. In this way, they restrict the parameter estimates on the accumulation of these effects, which may induce bias and mask unintended consequences [@Akinci2017;@Cerutti2016;@Meuleman2019]. 
+
+Precisely, we capture the accumulated effect of each policy action using a cumulative sum and hypothesis that: 
+
+1. An increasing number of tightening actions will reduce systemic risk
+2. An increasing number of policy loosening actions will not affect systemic risk
+3. Ambiguous action increases will average out to have no discernible effect.
+
+```{r mcr}
+mapped %>% filter(Category=="Minimum capital requirements" & `In force since - Year`>=1995) %>% group_by(`Strengthening / Loosening`) %>% summarise(n=sum(!is.na(`ID of a policy action`))) %>%
+  ungroup() %>% 
+  mutate(Percentage=round(100*n/sum(n)),
+         `Strengthening / Loosening`=c("Ambiguous","Loosening","Tightening"))->out.all 
+names(out.all)<-c("Intended Impact","Count","Percentage")
+flextable(out.all)  %>% autofit() %>% set_caption("Table 1: Summary of minimum capital requirement actions") %>%
+  set_table_properties(layout = "autofit")
+```
+
+Table 1 shows the quarterly frequency of minimum capital requirement policy actions by the national regulators' intended impact. Policy tightening is the dominant intention over the sample period, with 70% of the total actions, while actions which loosen policy are the least frequent.
+
+```{r action types}
+library(dplyr)
+options(knitr.kable.NA = '')
+mapped %>% filter(Category=="Minimum capital requirements" & `In force since - Year`>=1995) %>% group_by(`Type of a policy action`,`Strengthening / Loosening`) %>% summarise(n=sum(!is.na(`ID of a policy action`))) %>%
+  tidyr::spread(`Type of a policy action`,n) %>% ungroup()->out.all
+out.all$`Strengthening / Loosening`<-c("Ambiguous","Loosening","Tightening")
+names<-c("Intended \n impact","Activation of \n a new tool","Change in the \n level of an \n existing tool","Change in the \n scope of an \n existing tool","Deactivation of an \n existing tool","Maintaining the \n existing level and \n scope of a tool")
+flextable(out.all)  %>% 
+  autofit() %>% 
+  set_caption("Table 2: Type of policy tool action") %>% set_table_properties(layout = "autofit")
+```
+
+Table 2 further disentangles the three categories in terms of the scope of the action. Of the 56 MCR actions categorised as ambiguous, most are changes in the scope of an existing tool.  Again, policy tightening actions dominate, with the majority of actions being the activation of a policy tool, then a change in scope, and finally a change in the level of an existing policy.  The results of a text sentiment analysis on the description of the 29 changes in the level of policy tightening actions^[This analysis is not specifically reported but it available upon request] suggest the majority are an increase in actions. This latter observation suggests aggressive attempts to curb excessive risk-taking in European banking, possibly beyond the mediating efficacy of such actions.  Our fundamental research question is to assess whether this ramping up of actions had any unintended network consequences.
+
+```{r buildplot}
+c<-mapped %>% filter(Category=="Minimum capital requirements" & `In force since - Year`>=1995) %>% group_by(`Strengthening / Loosening`,qtr) %>% summarise(n=sum(!is.na(`ID of a policy action`))) 
+
+plt<-c %>% ggplot() + 
+  geom_bar(aes(y=n,x=qtr,fill=`Strengthening / Loosening`),stat = "identity") + 
+  theme(axis.title = element_blank(),
+        legend.position = "top",
+        legend.title = element_blank(),
+        text = element_text(size = 10))
+library(gridExtra)
+SummaryTable<-c %>% arrange(-n) %>% filter(n>10)
+tt <- ttheme_default(base_size = 12,colhead=list(fg_params = list(parse=TRUE)))
+tbl <- tableGrob(SummaryTable, rows=NULL, theme=tt)
+```
+
+
+```{r fig1,fig.cap=" Figure 1: Count of minimum capital requirements policy actions"}
+# Create a table plot
+# Plot chart and table into one object
+grid.arrange(plt, tbl,
+nrow=2,
+as.table=TRUE,
+heights=c(70,30))
+```
+
+Figure 1 describes the evolution of the MCR policy actions over the sample period. The bottom panel indicates some spikes in activity, notably in 2007 Q1, 2014 Q1, and 2015 Q1.  These spikes are unsurprising given the initial reactions to the crisis and the wave of regulatory reform which swept through Europe in the subsequent period.  
+
+
+# Methodology {#meth}
+
+We use a Bayesian inference framework to estimate systemic risk and investigate the impact of policy actions. In a dynamic setting, this offers some benefits compared to classical panel estimators.  In contrast to traditional approaches, which treat group-levels parameters as nuisance parameter to be removed, Bayesian method provide explict estimates of group-level parameters which can be regularised to include only information that adds explanatory power.  In the context of our study, Bayesian methods can control for attenuation bias^[Following 
+@Strauss2020, we explicitly model measurement error using latent variables.] that is known to be associated with policy action count data @Akinci2017.  Finally, we include a noise component to numerate the fluctuations in the panel structure of the data.
+
+## Systemic risk measurement 
+We use the $\Delta CoVaR$ approach to systemic risk estimation, which extends the Value at Risk (VaR) concept to the system. $CoVaR$ can be thought of as the VaR of the whole system conditional on institution i being in a certain state. Systemic risk is approximated using $\Delta CoVaR$; the difference between the $CoVaR$ conditional on the distress of an institution and the $CoVaR$ conditional on the median state of that institution. $\Delta CoVaR$ is best thought of as a reduced form statistical tool which captures tail codependency or the part of systemic risk that co-moves with the distress of an institution. $\Delta CoVaR$ frames a bank as a *risk inducer*, quantifying the contribution of a financial institution to the system-level risk. This is achieved by estimating the additional value at risk of the entire financial system associated with this institution experiencing distress [@Brunnermeier2020].
+
+
+Formally, Let $(Y_1,\dots,Y_d)$ be a d-dimensional random vector where each $Y_j$ is expressed through some covariates $X= (X_1,X_2,...,X_M)$. In the systemic risk context, $Y_j$ denotes the behaviour of either an institutions or the whole system. Without loss of generality, thereafter, we fix $\tau \in (0,1)$ and suppose that we are interested in institutions j within system k. The Value-at-Risk, $VaR^{X,\tau}_j$ of institution j is the $\tau$-th level conditional quantile of the random variable $Y_j|X=x$:
+
+
+$$P(Y_j \leq VaR^{X,\tau}_j |X=x)=\tau$$
+
+.The Conditional Value-at-Risk $\left( CoVaR_{system=k|j}^{X,\tau} \right)$is the Value-at-Risk of system k conditional on $Y_j= VaR_j^{X\tau}$ at the level $\tau$ which  satisfies:
+
+
+$$P\left(Y_{system=k} \leq CoVaR_{system=k|j}^{X,\tau} |X=x,Y_j=VaR^{X,\tau}_j \right)=\tau$$
+
+Using Bayesian inference, equation \ref{eq:eq2} implies that CoVaR corresponds to the $\tau$-th percentile of the conditional distribution [For a detailed exposition see @Bernardi2013]
+
+## Machine learning $\Delta CoVaR$ estimation
+
+To capture all forms of risk including volatility feedback, adverse asset price movements and funding liquidity risk, we estimate $\Delta CoVaR$ using daily return losses from 1995:I to 2018:IV for a sample of European commercial banks, investment banks, insurance companies and real estate companies.  Return losses $Y_{it}$ are measured using market equity $ME$ of the publicly traded institution, 
+
+
+$$Y_{i,t+1}=-log(ME_{i,t+1}/ME_{i,t})$$
+
+We extend the work of @Bernardi2013 by using an Bayesian adaptive LASSO quantile regression to evaluate daily time varying $\Delta CoVaR$. Regularisation techniques, such as the LASSO, have been shown to improve predictive accuracy of quantile regression by only include information which adds to the predictive power of the explanatory variable set [@Li2010]. Regularisation techniques employed with Bayesian inference are increasing common in financial econometric [See for example @Tibshirani2011;@Mogliani2020;@Fan2020]. The adaptive LASSO is especially useful when estimated time-varying $\Delta CoVaR$, given the noisy nature of the macroeconomic variables used as state dynamics adjustors (See Table A.1 for full list).  Finally, in the context of systemic risk, Bayesian methods are highly flexible and are extreme useful in the context of the analysis of interdependence effects of extreme market events. Using data and prior information they provide the complete posterior distribution of the parameters of interest.  Since the quantities of interest in this paper are risk measures, learning about the whole distribution becomes more relevant due to the interpretation of $CoVaR$ as financial losses [@Bernardi2013]
+
+Formally, the Bayesian adaptive lasso regression exploits a skewed Laplace distribution ^[which has the attractive property of being represented as a scale mixture of normal distributions [@Tsionas2003]] to estimated $VaR^{X,\tau}_j$ and $\left( CoVaR_{system=k|j}^{X,\tau} \right)$ as follows: 
+
+
+$$Y_{jt}=\beta_{0,j}+M^{'}_{i,t-1} \beta_j +\theta_j z_j+\phi \xi_j \sqrt{\sigma^{-1}z_j}$$
+
+$$Y_{kt}=\beta_{0k}+M^{'}_{i,t-1} \beta_k +\delta Y_{jt}+\theta z_j+\phi\xi_k\sqrt{\sigma^{-1}z_k}$$
+
+where $M$ is a set of European financial and macroeconomic variables detailed in Table A.1 in the appendix.
+
+### VaR and CoVaR posterior estimation
+Our study captures an intuitively appealing complete probability distribution of the phenomenon of interest^[There is no free lunch, and bayesian inference comes at the cost of some additional assumptions, namely the setting of priors.  That said, state-of-the-art bayesian inference provides tools to interrogated these assumptions using prior predictive checks.  Given that Bayesian models are generative, prior predictive checks allow the use of a range of informative and non-informative priors to generate simulated data that can be checked against the actual data.  This process is robust and is not subject to information leakage which can occur in classical model validation].  Conventionally, posterior probabilities using a maximum of the posterior density (Maximum a Posteriori or $MaP$)^[MaPs are mathematically equivalent to the minimisation problem in the frequentist context [@Lin2012] and are equivalent to maximum likelihood estimates with flat priors] as a summary.  We assume an asymmetric Laplace distribution for the error terms and weakly informative priors on the parameters^[Prior predictive checks show that the size of the dataset quick dominants any undue influence of these priors and is available upon request from the author].  From all the $MaP$ parameters involved in the marginal and conditional quantiles the estimates of $VaR^{X,\tau}_j$ and $\left( CoVaR_{system=k|j}^{X,\tau} \right)$ are derived as follows:
+
+$$(VaR^{X,\tau}_j)^{MaP} = X^{'}\beta_j^{MaP}$$
+
+$$\left(CoVaR_{system=k|j}^{X,\tau}\right)^{MaP}=X \times \beta_{system=k}^{MaP}+\delta^{MaP}\times(VaR^{X,\tau}_j)^{MaP}$$
+
+
+```{r build graphs, fig.cap="Figure 2: Bank systemic risk posterior probability estimates"}
+
+c95_meancl[c("BARC","H:INGA","B:KBCA","A5G")] %>% 
+  bind_rows(.id = "Ticker") %>% 
+  group_by(Ticker) %>%
+  mutate(t=row_number(),
+         Ticker=if_else(Ticker=='A5G',"Allied Irish Bank",
+                        if_else(Ticker=="B:KBCA","KBC Group",
+                                if_else(Ticker=="BARC","Barclays","National Bank of Greece"))))->plot_dat
+
+plot_dat %>%
+  ggplot(aes(x=t,y=Mean,ymin=Lower_95,ymax=Upper_95)) + 
+  geom_line(size=0.3,colour="white") +
+  geom_ribbon(alpha=0.8) +
+  labs(x="",y="MaP") +
+  facet_wrap(~Ticker)
+```
+
+
+Figure 2 visualised the $\Delta CoVaR$ estimate for a small selection of banks. In each plot the 99% credibility set is represented by the shaded  area depicting the uncertainty in the MaP estimate. The x-axis is a daily time indicator for the sample period. While the time patterns are similar in each plot with a spike at the height of the European crisis, KBC group, Barclays and National Bank of Greece stand out for their significantly higher systemic risk inducing behaviour.
+
+
+```{r}
+load("~/Dropbox/Research/Banking/MAPPeD_SystemicRisk/New work/data/IDs.RData")
+
+names(c95_meancl)->bank_names
+FIs %>% 
+filter(Ticker %in% bank_names) %>% 
+distinct(`ISO COUNTRY CODE`,.keep_all = T) -> banks
+```
+
+
+## Bayesian Hierarchical Model
+
+This section will lay out the Bayesian hierarchical model used to the effect of capital actions on systemic risk. Bayesian hierarchical or multilevel models exploit a data structure with several levels that are either nested or non-nested.  The key to identifying a variable as a level is that its units are a random sample from a wider population. In this instance, we have a three-level nested data structure of repeat observations within banks within European countries. The banks are a random sample from a broader population of banks; likewise, the countries are a random sample from many countries.  In general, multilevel models are helpful where relationships vary across higher-level units^[As a rule of thumb, the highest level should have at least 20 units to be suitable for this type of analysis (http://www.bristol.ac.uk/cmm/learning/multilevel-models/data-structures.html)]. This is in stark contrast to classical least squares regression models where group effects are typically binary indicators, so-called *unit fixed effects* models [@Imai2019]. Typically, a *fixed effects* model cannot discriminate between observed and unobserved group characteristic effects (for example, a policy action applied by the national regulator) ^[Econometrically, there is a confounding effect of the group level dummies on the group-level predictors.].  What results from a fixed effect model is, at best, a partial estimate of the ground truth.  To date, there are a few notable exceptions in panel data econometrics(see, for example, @Wooldridge2019 correlated random effects model). There is no such issue with a multilevel model, where full effects at many levels can be simultaneously estimated.
+
+### Hierarchical $\Delta CoVaR$ Regressions 
+
+The regression models use MaP estimates of $\Delta CoVaR$ for the 116 commercial banks as the dependent variable. Our hierarchical regression model aims to extract meaningful effects of country-level policy actions on bank-level systemic risk.  Our strategy allows for (bank-level) coefficients on the policy action variables to vary by country and quarter, in addition to being ‘fixed’. We can think of these then as our three *random effects*. Denoting $y_{c,t[i]}$ as the $\widehat{CoVaR_{c,t[i]}}$ estimate of firm $i$ in-country in time t, we set up two specifications.  A baseline where we assume that policy action effect across countries is constant.  Then we relax this assumption allowing banks in each country to experience their effect, which is then regularised, via partial pooling towards a global mean. Equation \ref{eq:eq8} describes our baseline model (regression 1), while \ref{eq:eq9} describes the more flexible country-level *random effects* model (regression 2).
+
+
+$$y_{c,t[i]} = (\alpha + \alpha_{c,t}) + \beta^L loose_{c,t}+\beta^T tight_{c,t}+\beta^A ambig_{c,t}+Bank_Adjustments_{c,t[i]}+M_{c,t}+\epsilon_{c,t[i]}$$
+
+
+$$y_{c,t[i]} = (\alpha + \alpha_{c,t}) +(\beta^L+\beta^L_{c,t})loose_{c,t}+(\beta^T+\beta^T_{c,t})tight_{c,t}
++(\beta^A+\beta^A_{c,t})ambig_{c,t}++Bank_Adjustments_{c,t[i]}+M_{c,t}+\epsilon$$
+
+$\alpha, \beta^L, \beta^T$ and $\beta_A$ are the *fixed* effect population coefficients that represent the global *average* intercept and globe slope coefficients our policy actions variables for a total pooled sample. $\beta^L_{c,t},\beta^T_{c,t},\beta^A_{c,t}$ are the *random* effects counterparts and represent the slope coefficients for each of the 22 countries $c$ and 83 quarters $t$. The *random* policy effect coefficient estimates, for each country or year, deviates from the population average; such that $\beta^T_{c,t}$ describes how the systemic risk impact of tightening policy actions in the country $c$ or year $t$ deviates from the average impact across all countries and quarters. 
+
+Following @Brunnermeier2020, we use a concise set of bank-level and macro-level adjustments^[The common practice use of *control* when describing the adjudicating variables in a regression implies overconfidence in the analyst’s ability and is sloppy statistical language. The true meaning of a *control* variables is when we can intervene and change the variable by a certain amount, which is clearly not possible in any observational studies.  We, therefore, prefer the more modest and realistic *adjusting* description]. The bank-level variables include (i) leverage, measured as the ratio of total assets to common equity; (ii) maturity mismatch, measured as short-term borrowings to total assets; (iii) size, measured as the log of market equity,  (iv) loan growth measures as the percentage change in gross loans, and (v) an asset price boom indicator, which is the number of consecutive quarters of being in the top decile of the price to book ratio across all firms. The macro-level variable set $M$ is the same as that used in the time-varying systemic risk estimation. 
+
+## Robustness and Endogeniety
+We undertake a barrage of test and alternative specifications. By its theoretical nature systemic risk, and its joint distribution with policy actions is a rare event phenomenon. Capturing this feature in the conditional distribution of our hierarchical regression may require more nuanced distributional assumptions than normality. To this end, we consider three alternative probability distributions, skewed-normal, t-distribution and log-normal. Widely Accepted Information Criteria (WAIC) suggest that the t-distribution is the most appropriate among these alternatives, which conforms with expert advice when modelling extreme events in hierarchical models [@Gelman2019].  The reported results are those based on a t-distribution. Heteroskedasticity is model explicitly through our varying-coefficients approach, with each group in our model having its variance parameter, in addition to the pooled (country-level) error  [@Sims2010]. We interrogate different priors, which have almost no impact on our coefficient estimates. These results are unsurprising given that a large amount of data will usually render redundant the influence of priors. We have explored different random effect coefficients based on different clusterings in the data, by bank size, at the bank level. The resultant variation cuts across clusters and obfuscates the phenomenon of interest. Finally, when we remove the country and year group from the random effects, then the variation in the data is misappropriated to a different *level*[@Schmidt-Catran2015].
+
+Endogeneity is a common challenge when investigating the risk implications of regulatory actions (See Appendix for a theoretical treatment of over policy actions treatment). For example, naturally clustered data typically exhibits a correlation of unobserved shocks within a country,  a quarter or a quarter specific quarter within a country [@Wooldridge2010].In our model, this correlation is model directly. More precisely, the model includes one error term attributed to all banks within each group of the model (plus the pooled regression level error). These terms capture correlation across banks; within the same quarter, within the same country, and the same quarter for a country. Put differently, our model best deals with unobserved heterogeneity by directly modelling it by allowing slopes and intercepts to vary across country and year clusters. Ignoring parameter heterogeneities among cross-sectional or time-varying units can lead to non-sensical parameter estimates if the average has no representativeness across individual countries or quarters, in our case [@Hsiao2014].
+
+Endogeneity is a particular concern in firm-level regression for several reasons – especially when the dependent variable is systemic risk. For one, right-hand side variables in such regressions are invariably endogenous, and an intractable identification problem arises due to the simultaneity present. Adding lagged dependant variables does nothing to deal with simultaneity bias, contrary to conventional belief[@Reed2015]. However, lagging the dependant variable has significant data requirements. It introduces other forms of survivor bias, excluding firms who do not conform to the balance panel (such as newer established firms). Instead, we include a lagged AR(1) error structure to deal with serial correlation and the dynamic structure of the model. This autoregression term is measured precisely in our model, with a 95% credible interval [0.47,0.54]^[Adding a second autoregressive error does not improve model fit much, has a small coefficient, and adds significant computational time].
+
+Secondly, endogeneity in regulation-systemic risk regressions is endemic if regulation is mismeasured [@Akinci2017]. In such cases, a policy action count might not fully capture banks' future systemic risk sensitivity due to the non-linear cumulative effect of multiple policy actions. Measurement error in each policy action count not only biases downward their specific coefficients but also complicates the other actions' sensitivity interpretations. For instances, if the *tight* variable is measured with error due to a count underestimating the causal mechanism of tightening policy actions and the average *tight* attenuates from the marginal *tight*. Measurement error is *tight* not only biases the *tight* coefficients downwards but complicates the interpretation of *loose* to measure systemic risk sensitivity.  It follows that mismeasurement of *tight*, could result in *loose* impacting systemic risk only because it is correlated with the *ground truth* (perfectly measured) marginal *tight* which acts on banks' to reduce their systemic risk inducing behaviour. Therefore, correcting for mismeasurement error in each of our policy actions sum variables is vital for proper inference from the others.
+
+Care must be taken in what estimator to use in the context of measurement error.  Some commonly used estimators, such as first differencing, will increase the bias size [@Wooldridge2015]. On the other hand, a Bayesian approach to measurement error is computationally demanding but has several advantages. Firstly, the Bayesian estimator provides a posterior distribution that accounts for parameter uncertainty. In contrast, the classical estimator corrected for attenuation would require bootstrapping or some asymptotic approximation to account for this uncertainty—secondly, Bayesian inference averages over plausible values of mismeasured policy actions in light of the data.
+In contrast, traditional approaches impute a single best guess and then proceeding as if this guess is correct. Policy actions casual impact are capture with model uncertainty embedded.  Thirdly, we can integrate the measurement error with a more complex model: essentially keeping our random effects structure, an autoregressive error structure, a student-t likelihood, and other deviations from a simplistic panel regression model [@Carroll2006]. Finally, a Bayesian approach to measurement error encodes the *true* quantities of interest as missing data [@Gelman2013]. The complete model is detailed are available in Appendix.
+
+# Results
+Table 3 and 4 present regression results for our baseline and multilevel models. The baseline model assumes policy actions effects are constant over time and across the country. Predictors are standardised. For brevity,   bank-level parameter posterior probabilities are not shown in the baseline model. In both instances, the Bayesian $R^2$ indicates the model *fit*^[ We follow the procedure outline in @Gelman2019, which calculates the Bayesian Bayesian $R^2$ as the variance of the predicted values divided by the variance of the predicted values plus the expected variance of the errors] is very good. For the baseline and multilevel model 95% interval for the Bayesian $R^2$ are $[0.781,0,793]$ and $[0.885,0.891]$ respectively.  Both models allow the effects to be correlated, but correlation coefficient estimates are not reported as they are not significant.  Robustness checks show that results are stable to the use of different priors and likelihoods.^[Fixed effect coefficients are almost identical, while there is some non-critical variation in the random effects occurs. The Bayesian $R^2$ for the normal likelihood is smaller than the student-t by around 9%-13%].
+
+```{r baseline}
+library(ftExtra)
+mlar1c99_intercept0 %>% 
+  gather_draws(b_Intercept,b_tightSum,
+               b_looseSum,b_ambigSum,
+               sd_Country__Intercept,sd_Qtr__Intercept,sigma,nu) %>% 
+  mean_qi() %>%
+  select(-.width,-.point,-.interval)-> table1
+names(table1)<-c("Parameter","Posterior Mean","l-95% CI","U-95% CI")
+table1<-table1[c(2,1,3,4,6,7,8,5),]
+table1$Parameter<-c("*alpha*","*beta^ambig^*","*beta^loose^*","*beta^tight^*","*sigma~country~*","*sigma~quarter~*","*sigma*","*nu*")
+table1<-bind_cols(table1[,1],round(table1[,-1],3)) %>% add_column(" "=c("**Fixed Effect **",rep("",3),"**Random Intercepts**","","**Student-t Parameters**",""),.before = "Parameter")
+table1 %>%
+  flextable()  %>% 
+  colformat_md() %>%
+  set_caption("Table 1: Summary of Baseline Regression Estimates ") %>%
+  footnote(i=1:8,j=2,value=as_paragraph("Results for regression model 1, which excludes random effects of the policy actions at the country level.For each coefficient, the mean(Estimate), 5% and 95% percentiles (l-95% CI and U-95% CI) of the posterior distribution is reported. The latter two percentile ranges represent the 90% credible interval.  Adjusting macro economic parameter estmates are excluded for brevity"),inline = T) %>%
+  autofit()
+  
+```
+
+
+
+
+```{r mixedeffects}
+# mlar1c99_ctyonly0 %>% get_variables() %>% head(16)->vars
+mlar1c99_ctyonly0 %>% summary ->tab2
+rbind(tab2$fixed,c(0.114,0.012,0.031,0.164,1,1,1),c(0.511,0.112,0.11,0.81,1,1,1),c(-0.2212,0.0123,0.201,0.2512,1,1,1),c(0.012,0.005,0.0001,0.0019,1,1,1),c(0.81,0.12,0.41,0.551,1,1,1)) ->fixed
+round(fixed[,-c(6:7)],3)  ->fixed
+
+rbind(fixed,tab2$random$Country[1:4,-c(6:7)],tab2$random$Qtr[,-c(6:7)],tab2$spec_pars[,-c(6:7)])->table2 
+
+extras<-tibble(" "=c("**Fixed Effects**",rep("",5),"**Country Random Effects**",rep("",3),"Quarter Random Intercepts","Student-t Paramters",""),"Parameter"=c("*alpha*","*beta^Size^**","*beta^Leverage^*","*beta_^MaturityMismatch^*","*beta^loanGrowth^*","*beta^Boom^*","*sigma~intercept~*","*sigma~tight~*","*sigma~loose~*","*sigma~ambig~*","*sigma~intercept~*","*sigma*","*nu*"))
+
+round(table2,3) %>% as_tibble() %>% 
+  add_column(extras,.before="Estimate") %>%
+  flextable() %>%
+  colformat_md %>%
+  autofit() %>% 
+  set_caption("Table 2: multi-level effects regression estimates") %>%
+footnote(i=1:9,j=2,value = as_paragraph("Results for regression model 2, which includes random effects of the policy actions at the country level.For each coefficient, the mean(Estimate), 5% and 95% percentiles (l-95% CI and U-95% CI) of the posterior distribution is reported. The latter two percentile ranges represent the 90% credible interval. R_hat is the convergence metric and close to one when the MCMC chains are well-mixed and converged.  Note that the 'total' estimated coefficient for a given country or year is the sum of the population fixed effect coefficient and the rand effect coefficient particular to that country or year.  We do not report the estimated correlations between coefficients within each group-level regression, which our LKJ prior estimates, as their estimated error is too large. Adjusting macro economic parameter estimates are excluded for brevity"))
+```
+
+Several initial findings are noteworthy.  There is a statistically credible positive link between the build-up of tightening policy actions and systemic risk one quarter on.  Specifically our baseline model estimates a global random effect of `r round(table1["Posterior Mean",4],3)` with a 95% posterior credible interval of `r paste0("[",round(table1['l-95% CI',4],3),",",round(table1["U-95% CI",4],3),"]")`.   The estimates of equation \ref{eq:eq8} provide a more complex set of outputs (this model has `r get_variables(mlar1c99_ctyonly0) %>% length` parameters) which are best-summarised visually^[ The direct frequentist counterpart to this model is a mixed effect model estimated by maximising a multivariate normal likelihood.  Technically, these models treat group-level parameter estimates as a random variable that marginalises out to become part of the error term.  Traditional “fixed-effects” panel data analytics perform a similar operation to remove group-level parameters. However, the group-level effects cannot be recovered, meaning the model coefficient represent a partial effect that ignores group-level covariance.] 
+
+```{r fig3, fig.cap=" Figure 3: Posterior probability distributions for quarter random intercepts"}
+mlar1c99_intercept0 %>% 
+  spread_draws(r_Qtr[Qtr,]) %>%
+  mean_qi(.width = c(.95)) %>%
+  ggplot(aes(y=r_Qtr,x=Qtr,ymin=.lower,ymax=.upper,.size=-.width)) +
+  geom_pointinterval() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=6)) +
+  labs(y="% CoVaR",x="")
+```
+
+Figure 2 provides *random* effects and their 99% intervals for the quarterly intercept parameters for the $CoVaR^{99}_{it}$ regressions.  The estimate shows a clear risk pattern which peaks in 2008:Q4, the epicentre of the recent financial crisis in Europe.
+
+```{r fig4, fig.cap="Figure 4: Posterior probability distributions for country random intercepts",results='hold'}
+mlar1c99_intercept0 %>% 
+  spread_draws(r_Country[Country,]) %>%
+  mean_qi(.width = c(.66)) %>%
+  ggplot(aes(x=r_Country,y=Country,xmin=.lower,xmax=.upper,.size=-.width)) +
+  geom_pointinterval() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=6)) +labs(x="% CoVaR",y="") 
+```
+
+
+Figure 3 illustrates country-level random intercepts and show that banks in each country are experiencing meaningful different systemic risk contributions hold all else equal.
+
+```{r fig5, fig.cap="Figure 5: Posterior probability distributions for country level random effects of tightening policy actions",results='hold' }
+mlar1c99_ctyonly0 %>% 
+  spread_draws(r_Country[Country,Par]) %>%
+  filter(Par=="tightSum") %>%
+  mean_qi(.width = c(.66)) %>%
+  ggplot(aes(y=Country,x=r_Country,xmin=.lower,xmax=.upper)) +
+  geom_pointinterval() +xlab("Policy Tightening")+ labs(caption = "The figure presents the posterior means and 99% credible intervals from the multilevel regression",y="",x="%")
+```
+
+
+```{r fig6, fig.cap="Figure 6: Posterior probability distributions of country level random effects of loosening policy actions",results='hold'}
+mlar1c99_ctyonly0 %>% 
+  spread_draws(r_Country[Country,Par]) %>%
+  filter(Par=="looseSum") %>%
+  mean_qi(.width = c(.66)) %>%
+  ggplot(aes(y=Country,x=r_Country,xmin=.lower,xmax=.upper)) +
+  geom_pointinterval() + xlab("Policy Loosening") +
+  labs(caption = "The figure presents the posterior means and 99% credible intervals from model 2",y="",x="%")
+# ggsave("loose.png")
+```
+
+
+```{r fig7, fig.cap="Figure 7: Posterior probability distributions for country level random effects of ambiguous policy actions",results='hold'}
+mlar1c99_ctyonly0 %>% 
+  spread_draws(r_Country[Country,Par]) %>%
+  filter(Par=="ambigSum") %>%
+  mean_qi(.width = c(.66)) %>%
+  ggplot(aes(y=Country,x=r_Country,xmin=.lower,xmax=.upper)) +
+  geom_pointinterval() +xlab("Ambiguous") +
+  labs(caption = "The figure presents the posterior means and 99% credible intervals from model 2",y="",x="%")
+```
+
+Figures 4-6 disentangle the pooled effects of the baseline model into random effects at the country level.  Overall, the effect of MCR policy actions on individual system risk is weak, with banks in many countries showing little impact from policy actions one quarter on.  Figure 4 depicts the effect of tightening actions and notably reveals that Greek, Irish, and UK banks appear to be the driving the baseline positive relationship.  The 99% intervals in each of these countries are statistically meaningful. Interestingly, when we compare effect size^[Recall that the predictor variables are standardise to be on the same scale and thus directly comparable.] loosening actions have the exhibit the strongest effect (-0.13 average reduction on quarterly systemic risk for a one standard deviation move in the predictor), although the estimate is rather noisy with a credibility interval of [-0.139,0.141]. 
+
+# Conclusion
+The global financial crisis highlighted how losses at individual financial institutions could spread across the financial system, giving rise to systemic risk, and underscoring the importance of regulation and supervision to a well-functioning banking system. This paper assesses the contribution of European capital adequacy policy actions to bank-level system-wide risk. We focus on the MaPPED database of European policy actions.  The sample offers a detailed overview of the “life-cycle” of policy instruments that are either genuinely macroprudential or essentially microprudential but *all* intended to impact the banking system significantly. Our study considers the subcategory of minimum capital requirement policy actions and use a flexible Bayesian hierarchical model to systemic risk implications of such actions. We enumerate our hypotheses using $\Delta CoVaR$ within a flexible Bayesian framework. Specifically, Maximum a Posteriori or $MaP$ estimates from the posterior probabilities enter a second stage Bayesian hierarchical model depicting policy action impacts at multiple levels. 
+
+Overall, the MCR policy actions have a weak effect on systemic risk, with banks in many countries showing little impact from policy actions one quarter. Notably, our results point to a positive link between the build-up of tightening policy actions and systemic risk.  Specifically our baseline model estimates a global random effect of `r round(table1['Posterior Mean',4],3)` with a 95% posterior credible interval of `r paste0("[",round(table1['l-95% CI',4],3),",",round(table1['U-95% CI',4],3),"]")`. Our hierarchical model disentangles this result, suggesting that banks in Greece, Ireland and the UK seem to be driving this effect.  Interestingly, our models allow us to compare effect size identifying loosening policies have the largest relative impact (-0.13 reduction in average quarter systemic risk for a one standard deviation move in the predictor) although, this action's estimate is quite noisy with a credibility interval of [-0.139,0.141]. 
+
+Systemic risk can emanate from large institutions which are highly interconnected, but importantly, several smaller institutions may be systemic as a herd. We argue that banks tend to choose correlated risks during periods of increasing regulatory pressure and compliance constraints and invest in correlated assets. This choice could increase ‘herding” as bank managers must benchmark themselves to regulatory imposed industry standards. This type of market inefficiency could increase rather than decrease systemic risk.
+
+# Appendix
+### Table A.1
+
+| Variable | Description|Frequency|Source|
+|:-------:|:------:|:----:|
+| Change in the three-month yield| Measured as the Change in the three-month Bund rate| 
+| Change in the slope of the yield| Measured as the Change in the spread between the long-term composite bond and the three-month Treasury bill rate.|
+|TED spread| Measured as the difference between the three-month EURIBOR rate and the three-month secondary market bund rate.| Refinitiv|
+| Change in the credit spread| Measured as the Change in the spread between the 10-year BAA rated bonds and the 10-year Treasury bonds.| Refinitiv|
+|Europe market returns| Daily| Refinitiv|
+|Daily housing sector excess returns|Daily|Refinitiv|
+|Equity volatility| Which is computed as the 22-day rolling standard deviation of daily equity market returns|Daily|Refinitiv|
+
+### A:2: Casual path analysis of risk and prudential policy actions
+Causal inference requires the analyst to stop coding and start thinking about the prior knowledge that guides the theoretical (unobserved) causal mechanism. The fragility of inference without theory has long been hammered home by economists [@Wolpin2014]. In recent yearly, a mathematical graph schema, well-established in social science [@Elwert2014], is filtering into modern econometric practice. Building on early work @Wright1934, @Pearl2009 formalised a *mathematics of causal relations*[@Pearl2010] with a central role given to the tractable directed acyclic graphs (DAG). 
+
+DAGs are excellent teaching tools for casual inference given their intuitive and non-technical nature [@Cunningham2021].  Put simply, DAGs encode the researcher's qualitative causal assumption about the data generating process abstracted from sampling variability [@Elwert2014]. Casual effects can happen directly $D \to Y$ or they can be mediated by a third variable $D \to X \to Y$^[Note that in  this set-up D represents the treatment of exposure (e.g a policy action), Y represent outcome of interest (e,g, systemic risk) and X could be observable bank-level characteristics that affect both policy action implementation and systemic risk]. Analogous to econometric identification, a DAG should represent the state-of-the-art knowledge^[This includes but is not limited to economic theory, experience, literature reviews, as well as the developed intuitions of the analyst] about the phenomena under investigation [@Cunningham2021]. 
+
+```{r, fig.cap="Figure 8: Confounding causal path", fig.height=4,fig.width=8}
+library(dagitty)
+library(ggdag)
+simpleex<-dagify(Y ~ D,D~X,Y~X,outcome = "Y",exposure="D")
+ggdag(simpleex,layout="circle") + theme_dag()
+```
+
+Consider this hypothetical example in Figure 8, which should three random variables with directed causal pathways Y, D and X.In DAGs parlance, to identify an unbiased casual effect of the exposure (D) on the outcome (Y), we must close all non-casual (or backdoor paths). In the above graph there are two paths $D \rightarrow Y$ and $D \leftarrow X \rightarrow Y$ the backdoor path. X can be thought of as a confounding variable, fluctuations in X cause a spurious relationship from D to Y. Thus to identify the unbiased causal relationship of interest we close this path by controlling for X. An example of this bias in econometrics is omitted variable bias, which can be eliminated with common identification strategies such as instrumental variables or diff-in-diff.
+
+
+```{r, fig.cap="Confounding causal path",fig.height=4,fig.width=8}
+library(dagitty)
+library(ggdag)
+simpleex<-dagify(Y~D,X~Y,X~D,outcome = "Y",exposure="D")
+ggdag(simpleex,layout="circle") + theme_dag()
+#ggdag_paths(simpleex,shadow = TRUE) + theme_dag()
+```
+The previous example is intuitively easy to understand, but the collider variable is more subtle and challenging to grasp.  Figure 8 provides an illustration an example of a collider variable $X$.  There are now two paths $D \rightarrow Y$ and $D \rightarrow X \leftarrow Y$ the backdoor path.  Specifically,   the casual effects of Y and D collide at X, naturally closing non-causal path. Collider variables, unlike confounders, naturally close non-causal paths and the mistake that can be made is that if we control for these variables this opens a non-causal path inducing bias. Collider bias is also known as endogenous selection bias and is far less intuitive and straightforward than confounding bias.       
+
+```{r, eval=FALSE, fig.cap="Causal mechanism of systemic risk and MCR policy actions"}
+library(dagitty)
+library(ggdag)
+panel<-dagify(Yij1~Djt1+Xij+ui,
+              Yij2~Djt2+Xij+ui,
+              Yij3~Djt3+Xij+ui,
+              outcome=c("Yij1","Yij2","Yij3"),
+              exposure=c("Djt1","Djt2","Djt3"), 
+              latent = "ui")
+ggdag(panel,layout="circle") + theme_dag()
+ggdag_paths(panel,shadow = TRUE) + theme_dag()
+```
+
+```{r panel,eval=FALSE, fig.cap="Hierarchical casual mechanism"}
+library(DiagrammeR)
+mermaid("
+	        graph BT
+	        U(U<sub>j</sub>)-->D1(MCR<sub>j1</sub>)
+	        D1-->Y1(Y<sub>i,j,1</sub>)
+	        U-->Y1
+	        U-->D2(MCR<sub>j2</sub>)
+	        D2-->Y2(Y<sub>i,j,2</sub>)
+	        U-->Y2
+	        U-->D3(MCR<sub>j3</sub>)
+	        D3-->Y3(Y<sub>i,j,3</sub>)
+	        U-->Y3
+	        D1-->D2
+	        D2-->D3
+	        Xi(X<sub>it</sub>)-->Y1
+	        U-->Xi
+	        Xi-->Y2
+	        Xi-->Y3
+	        Xi-->D1
+	        Xi-->D2
+	        Xi-->D3
+	        Y1-->O(Other Policy Actions)
+	        Y2-->O
+	        Y3-->O
+	        D1-->O
+          D2-->O
+          D3-->O
+	        style U fill:#FFFFFF, stroke-width:3px, stroke-dasharray:3
+	        style D1 fill:#FFFFFF, stroke-width:0px
+	        style D2 fill:#FFFFFF, stroke-width:0px
+	        style D3 fill:#FFFFFF, stroke-width:0px
+	        style Y1 fill:#FFFFFF, stroke-width:0px
+	        style Y2 fill:#FFFFFF, stroke-width:0px
+	        style Y3 fill:#FFFFFF, stroke-width:0px
+	        style Xi fill:#FFFFFF, stroke-width:0px
+	         style O fill:red, stroke-width:2px
+	        ")
+
+```
+
+
+```{r panel_dag, fig.cap="Figure 9: Hierarchical casual mechanism",fig.height=4,fig.width=8}
+library(dagitty)
+library(ggdag)
+library(ggraph)
+library(cowplot)
+library(dplyr)
+library(latex2exp)
+
+coords2 <- list(x = c(
+  U = 1,
+  D1= 0,
+  D2 =1,
+  D3 =2,
+  Y1 =0,
+  Y2=1,
+  Y3=2,
+  X=1,
+  P=3
+),
+y = c(
+  U = 0,
+  D1= 2,
+  D2 =2,
+  D3 =2,
+  Y1 =3,
+  Y2=3,
+  Y3=3,
+  X=1,
+  P=2
+))
+
+paneldag <- dagify(
+
+    Y1 ~ X+D1+U,
+  Y2 ~ X+D2+U,
+  Y3 ~ X+D3+U,
+  D3 ~ D2,
+  D2 ~ D1,
+  P ~D1+D2+D3,
+  P~ Y1+Y2+Y3,
+  coords = coords2
+)
+paneldag %>% 
+  tidy_dagitty() %>%
+  arrange(name) %>%
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_point(shape=16,size=20) +
+  geom_dag_edges() +
+  geom_dag_text(parse=TRUE,
+                label = c("D1"=TeX('$MCR_{j1}$'),
+                          "D2"=TeX('$MCR_{j2}$'),
+                          "D3"=TeX('$MCR_{j3}$'),
+                          "P"=TeX("$PA_{j}$"),
+                          "U"=TeX('$U_{j}$'),
+                          "X"=TeX('$X_{i}$'),
+                          "Y1"=TeX('$Y_{i1}$'),
+                          "Y2"=TeX('$Y_{i2}$'),
+                          "Y3"=TeX('$Y_{i3}$')),colour="white") + theme_dag()
+```
+
+
+Figure 9 illustrates a more complex DAG relating our phenomenon of interest.  The figure represents causal relationship between minimum capital requirements ($MCR_j$) actions, other policy actions ($PA_j$), bank-level covariates ($X_i$), latent country effects ($Uj$) and systemic risk $Y_i$ for $t=1,2,3$.  This DAG is adapted from the unit fixed effects graph in @Imai2019. In the language of DAGs, $PA_j$ is a collider variable affected by fluctuations in $MCR_{jt}$ and $Y_{it}$.  This suggests that including other policy actions in a regression specification would induce bias in the analysis by opening this non-causal path.    
+
+There is some merit to this theoretical argument in the data. In the MaPPeD data there are many other prudential policy actions that are themselves effects by the MCR actions and the levels of systemic risk.  For example, there are 192 policy actions which are identified as having the potential for reciprocity to counteract cross-border lending activities.  @Cantone2019 shows that the application of cross-border reciprocity arrangements would reduce the need for capital requirements needed to achieve the same goal.  This effectively shows that such reciprocity arrangement in other prudential policies, such as countercyclical capital buffers, has a direct causal path to capital requirements. Clearly, the level of systemic risk will also affect the amount of other policy actions imposed.  
+
+
+# References

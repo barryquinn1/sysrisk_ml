@@ -20,3 +20,6 @@ DiagrammeR
 ggraph
 cowplot
 latex2exp
+flextable
+officer
+ftExtra
